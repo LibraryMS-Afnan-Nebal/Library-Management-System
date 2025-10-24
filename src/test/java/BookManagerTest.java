@@ -167,7 +167,7 @@ class BookManagerTest {
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () ->
                 {
-                   BM.borrowBook("12 3456789",new User("u1","afnan","36"));
+                   BM.borrowBook("12 3456789",new User(1,"afnan","36"));
                 }
         );
         assertEquals("ISBN cannot contain spaces", exception.getMessage());
@@ -177,22 +177,22 @@ class BookManagerTest {
     @Test
     void borrowBook_whenBookExistsAndNotBorrowed()
     {
-       assertTrue(BM.borrowBook("1234567890" , new User("u1","afnan","36"))               );
+       assertTrue(BM.borrowBook("1234567890" , new User(1,"afnan","36"))               );
     }
 
 
     @Test
     void borrowBook_whenBookAlreadyBorrowed()
     {
-       BM.borrowBook("1234567890" , new User("u1","afnan","36"));
-       assertFalse(BM.borrowBook("1234567890" , new User("u1","afnan","36"))                              );
+       BM.borrowBook("1234567890" , new User(1,"afnan","36"));
+       assertFalse(BM.borrowBook("1234567890" , new User(1,"afnan","36"))                              );
     }
 
 
     @Test
     void borrowBook_whenBookDoesNotExist()
     {
-        assertFalse(BM.borrowBook("1234567895",new User("u1","afnan","36")));
+        assertFalse(BM.borrowBook("1234567895",new User(1,"afnan","36")));
     }
 
 
@@ -207,7 +207,7 @@ class BookManagerTest {
     @Test
     void detectOverdueBooks_whenAllBooksWithinDueDate()
     {
-        BM.borrowBook("1234567890",new User("u1","afnan","36"));
+        BM.borrowBook("1234567890",new User(1,"afnan","36"));
         LocalDate today = LocalDate.now();
         LocalDate tomorrow = today.plusDays(1);
 
@@ -220,7 +220,7 @@ class BookManagerTest {
     @Test
     void detectOverdueBooks_whenBookPastDueDate()
     {
-        BM.borrowBook("1234567890",new User("u1","afnan","36"));
+        BM.borrowBook("1234567890",new User(1,"afnan","36"));
         LocalDate today = LocalDate.now();
         LocalDate tomorrow = today.plusDays(30);
 
@@ -233,7 +233,7 @@ class BookManagerTest {
     @Test
     void detectOverdueBooks_shouldCalculateFineCorrectly_whenBookIsOverdue()
     {
-        BM.borrowBook("1234567890",new User("u1","afnan","36"));
+        BM.borrowBook("1234567890",new User(1,"afnan","36"));
         LocalDate today = LocalDate.now();
         LocalDate tomorrow = today.plusDays(30);
 

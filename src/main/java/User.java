@@ -50,12 +50,8 @@ public class User {
 
     public List<Book> getBorrowedBooks() { return borrowedBooks; }
 
-    public boolean setBorrowedBooks(List<Book> books) {
-        if (books != null) {
-            this.borrowedBooks = books;
-            return true;
-        }
-        return false;
+    public void setBorrowedBooks(Book book) {
+        this.borrowedBooks.add(book);
     }
     /**
      * Adds a fine to the user.

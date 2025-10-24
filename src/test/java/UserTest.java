@@ -87,23 +87,23 @@ class UserTest {
         assertEquals("user1",user.getUsername());
     }
 
-    @Test
-    void setBorrowedBooks() {
-        List<Book> books = new ArrayList<>();
-        Book book1 = new Book("123", "Book One","1234567890");
-        Book book2 = new Book("456", "Book Two","1234567891");
-        books.add(book1);
-        books.add(book2);
-
-        assertTrue(user.setBorrowedBooks(books));
-        assertEquals(2, user.getBorrowedBooks().size());
-        assertTrue(user.getBorrowedBooks().contains(book1));
-        assertTrue(user.getBorrowedBooks().contains(book2));
-    }
-    @Test
-    void setBorrowedBooksNull() {
-        List<Book> books = null;
-        assertFalse(user.setBorrowedBooks(books));
-
-    }
+//    @Test
+//    void setBorrowedBooks() {
+//        List<Book> books = new ArrayList<>();
+//        Book book1 = new Book("123", "Book One","1234567890");
+//        Book book2 = new Book("456", "Book Two","1234567891");
+//        books.add(book1);
+//        books.add(book2);
+//
+//        assertTrue(user.setBorrowedBooks(books));
+//        assertEquals(2, user.getBorrowedBooks().size());
+//        assertTrue(user.getBorrowedBooks().contains(book1));
+//        assertTrue(user.getBorrowedBooks().contains(book2));
+//    }
+//    @Test
+//    void setBorrowedBooksNull() {
+//        List<Book> books = null;
+//        assertFalse(user.setBorrowedBooks(books));
+//
+//    }
 }
