@@ -1,8 +1,13 @@
+import java.time.LocalDate;
+
 public class Book {
     private final String title;
     private final String author;
     private final String ISBN;
-    private final boolean isAvailable;
+    private boolean isBorrowed;
+    private LocalDate dueDate ;
+    private boolean isOverdue;
+    private double fine;
 
     /**
      * Creates a new Book with the given title, author, and ISBN part.
@@ -16,22 +21,41 @@ public class Book {
      */
     public Book (String title,String author,String isbnPart)
     {
+        if (title.isEmpty())
+        {
+            throw new IllegalArgumentException("Title cannot be empty");
+        }
         this.title=title;
+
+        if (author.isEmpty())
+        {
+            throw new IllegalArgumentException("Author cannot be empty");
+        }
         this.author=author;
-        if (isbnPart.contains(" "))
+
+        String isbn = "978"+isbnPart;
+        validateIsbn(isbn);
+        this.ISBN = isbn;
+
+        this.isBorrowed = false;
+        this.isOverdue = false;
+        this.fine = 0.0;
+    }
+
+    public static void validateIsbn(String isbn)
+    {
+        if (isbn.contains(" "))
         {
             throw new IllegalArgumentException("ISBN cannot contain spaces");
         }
-        if (!isbnPart.matches("\\d+"))
+        if (!isbn.matches("\\d+"))
         {
             throw new IllegalArgumentException("ISBN must contain digits only");
         }
-        if (isbnPart.length() != 10)
+        if (isbn.length() != 13)
         {
             throw new IllegalArgumentException("ISBN must have 10 digits after the 978 prefix");
         }
-        this.ISBN = "978" + isbnPart;
-        this.isAvailable=true;
     }
 
     /**
@@ -58,6 +82,42 @@ public class Book {
         return ISBN;
     }
 
+    public boolean getIsBorrowed()
+    {
+        return isBorrowed;
+    }
+
+    public LocalDate getDueDate()
+    {
+       return this.dueDate;
+    }
+
+    public void setIsOverdue(boolean overdue)
+    {
+        this.isOverdue = overdue;
+    }
+
+    public double getFine()
+    {
+        return fine;
+    }
+
+    public void setIsBorrowed(boolean status)
+    {
+        this.isBorrowed = status;
+    }
+
+    public void setDueDate(LocalDate dueDate)
+    {
+        this.dueDate = dueDate;
+    }
+
+    public void setFine(double fine)
+    {
+        this.fine = fine;
+    }
+
+
     /**
      * @return a string representation of the book
      * including title, author, and ISBN
@@ -67,6 +127,7 @@ public class Book {
     {
         return String.format("Book{Title='%s', Author='%s', Isbn='%s'}", title,author, ISBN);
     }
+
 
 
 }
