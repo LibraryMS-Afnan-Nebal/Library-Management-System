@@ -7,80 +7,58 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AdminManagerTest {
+    private AdminManager manager;
+    private Admin admin1;
 
     @BeforeEach
     void setUp() {
-    }
+        manager = AdminManager.getInstance();
+        manager.getAdmins().clear();
+        manager.usernameToId().clear();
 
-    @AfterEach
-    void tearDown() {
     }
 
 
     @Test
-    void loginSuccess() {
-        AdminManager AM = new AdminManager();
-        Admin admin = new Admin("username", "password");
-        AM.addAdmin(admin);
-        assertTrue(AM.login("username", "password"));
-
-    }
-
-    @Test
-    void loginFailureWrongUsername() {
-        AdminManager AM = new AdminManager();
-        Admin admin = new Admin("username", "password");
-        AM.addAdmin(admin);
-        assertFalse(AM.login("wrongusername", "password"));
-    }
-
-    @Test
-    void loginFailureWrongPassword() {
-        AdminManager AM = new AdminManager();
-        Admin admin = new Admin("username", "password");
-        AM.addAdmin(admin);
-        assertFalse(AM.login("username", "wrongpassword"));
+    void testSingleton() {
+        AdminManager anotherInstance = AdminManager.getInstance();
+        assertSame(manager, anotherInstance, "AdminManager should be a singleton");
     }
 
 
     @Test
-    //username exists and admin is logged in
-    void logoutSuccess() {
-        AdminManager AM = new AdminManager();
-        Admin admin = new Admin("username", "password");
-        AM.addAdmin(admin);
-        AM.login("username", "password");
-        assertTrue(AM.logout("username"));
+    void GetAdminByUsername_NullUsername() {
+        assertNull(manager.getAdminByUsername(null), "Should return null");
+
     }
+    @Test
+    void GetAdminByUsername_NonExistentUsername() {
+        assertNull(manager.getAdminByUsername("nonExistent"), "Should return null");
+
+
+    }
+    @Test
+    void GetAdminByUsername_success() {
+        manager.addAdmin("admin1", "pass1");
+        admin1 = manager.getAdminByUsername("admin1");
+        assertEquals("admin1", admin1.getUsername());
+       }
 
     @Test
-    //username exists but admin is not logged in
-    void notLoggedinUsername() {
-        AdminManager AM = new AdminManager();
-        Admin admin = new Admin("username", "password");
-        AM.addAdmin(admin);
-        assertFalse(AM.logout("username"));
-    }
-  //username does not exist at all
-  @Test
-  void onExistentUsername() {
-      AdminManager AM = new AdminManager();
-      Admin admin = new Admin("username", "password");
-      AM.addAdmin(admin);
-      assertFalse(AM.logout("nonexistent")); // username does not exist
-  }
+    void testGetAdminById_NoAdmins(){
+        assertNull(manager.getAdminById(1), "Should return null if ID does not exist");
 
+    }
     @Test
-    void listAdminsTest() {
-        AdminManager AM = new AdminManager();
-        Admin admin1 = new Admin("user1", "pass1");
-        Admin admin2 = new Admin("user2", "pass2");
-        AM.addAdmin(admin1);
-        AM.addAdmin(admin2);
+    void testGetAdminById_Success() {
+        manager.addAdmin("admin1", "pass1");
+        Admin admin1 = manager.getAdminByUsername("admin1");
+        assertSame(admin1, manager.getAdminById(admin1.getAdminId()), "Should retrieve correct admin by ID");
+         }
+    @Test
+    void testGetAdminById_InvalidId() {
+        assertNull(manager.getAdminById(999), "Should return null for non-existent ID");
 
-        ArrayList<String> usernames = AM.getAdminUsernames();
-        assertTrue(usernames.contains("user1"));
-        assertTrue(usernames.contains("user2"));
-        assertEquals(2, usernames.size());
     }
+
 }

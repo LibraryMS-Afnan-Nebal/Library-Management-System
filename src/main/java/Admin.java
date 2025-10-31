@@ -1,72 +1,95 @@
 /**
  * Represents an administrator in the Library Management System.
- * Each admin has a username, password, and login status.
+ * Each admin has an ID, username, password, and login status.
  * Provides methods to log in and log out.
  *
  * @author Nebal
  * @version 1.0
  */
 public class Admin {
+    private int adminId;
     private String username;
     private String password;
-    private boolean isLoggedIn = false;
+    private boolean isLoggedIn;
+
+
+    public Admin (){}
 
     /**
      * Constructs an Admin object with the given username and password.
      *
+     * @param adminId   the admin's unique ID
      * @param username the admin's username
      * @param password the admin's password
      */
-    public Admin(String username, String password) {
+
+    public Admin(int adminId ,String username, String password) {
+        this.adminId = adminId;
         this.username = username;
         this.password = password;
+        this.isLoggedIn = false;
+    }
+
+
+    public boolean isLoggedIn() {
+        return isLoggedIn;
+    }
+    public int getAdminId() {
+        return adminId;
+    }
+    protected void setLoggedIn(boolean loggedIn) {this.isLoggedIn = loggedIn;}
+    public String getPassword() {
+        return password;
+    }
+    public String getUsername() {
+        return username;
+    }
+    public void setUsername(String newUsername) {this.username = newUsername;}
+    public void setPassword(String newPassword) {this.password = newPassword;}
+
+    /**
+     * Requests to change this admin's username through the authentication system.
+     * Ensures that the new username is unique and updates all related records
+     * in the manager’s mappings.
+     *
+     * @param newUsername the new username to assign to this admin
+     * @return true if the username was successfully changed; false otherwise
+     */
+    public boolean changeUsername(String newUsername) {
+       return Authentication.changeUsername(this.username, newUsername, AdminManager.getInstance().getAdmins(), AdminManager.getInstance().usernameToId());
     }
 
     /**
-     * Attempts to log in using the provided credentials.
+     * Requests to change this admin's password through the authentication system.
+     * The authentication layer validates the input and applies the change
+     * directly to this admin's record.
+     *
+     * @param newPassword the new password to assign to this admin
+     * @return true if the password was successfully changed; false otherwise
+     */
+    public boolean changePassword(String newPassword) {
+        return Authentication.changePassword(this.username, newPassword, AdminManager.getInstance().getAdmins(), AdminManager.getInstance().usernameToId());
+    }
+
+    /**
+     * Attempts to log in the admin using username and password.
      *
      * @param username the entered username
      * @param password the entered password
-     * @return true if credentials match and login is successful, false otherwise
+     * @return true if login succeeds; false otherwise
      */
     public boolean login(String username, String password) {
-        if (this.username.equals(username) && this.password.equals(password)) {
-            isLoggedIn = true;
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Checks if the admin is currently logged in.
-     *
-     * @return true if logged in, false otherwise
-     */
-    public boolean isLoggedIn() {
-        return isLoggedIn;
+        return Authentication.login(username, password, AdminManager.getInstance().getAdmins(), AdminManager.getInstance().usernameToId());
     }
 
     /**
      * Logs out the admin.
-     *
-     * @return true if the admin was logged in and is now logged out,
-     *         false if the admin was already logged out
+     * @return true if logout succeeds; false otherwise
      */
     public boolean logout() {
-        if (isLoggedIn) {
-            isLoggedIn = false;
-            return true;
-        } else {
-            return false;
-        }
+        return Authentication.logout(this.username, AdminManager.getInstance().getAdmins(),AdminManager.getInstance().usernameToId());
     }
 
-    /**
-     * Returns the username of this admin.
-     *
-     * @return the admin's username
-     */
-    public String getUsername() {
-        return username;
-    }
+
+
 }

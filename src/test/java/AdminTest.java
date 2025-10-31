@@ -5,9 +5,18 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AdminTest {
+   private Admin admin;
+    private AdminManager manager;
 
     @BeforeEach
     void setUp() {
+        manager = AdminManager.getInstance();
+        manager.getAdmins().clear();
+        manager.usernameToId().clear();
+
+        admin = new Admin(manager.getNextAdminId(), "username", "password");
+        manager.getAdmins().put(admin.getAdminId(), admin);
+        manager.usernameToId().put("username", admin.getAdminId());
     }
 
     @AfterEach
@@ -15,68 +24,45 @@ class AdminTest {
     }
 
     @Test
-    void loginSuccess() {
-        //1. create variables + expected result
-        String username = "admin1";
-        String password ="123";
-        boolean er= true;
-        //2. create obj from the class
-        Admin admin = new Admin (username ,password);
-        //3. call the methode
-        boolean ar= admin.login(username,password);
-        //4. compare expected to actual result
-        assertTrue(ar==er);
-    }
-    @Test
-    void loginFailureWrongUsername() {
-
-        String username = "admin1";
-        String password ="123";
-        String wrongName ="Wrong";
-        Admin admin = new Admin (username ,password);
-        assertFalse(admin.login(wrongName,password));
-    }
-   @Test
-    void loginFailureWrongPassword() {
-
-        String username = "admin1";
-        String password ="123";
-        String wrongPassword ="Wrong";
-        Admin admin = new Admin (username ,password);
-        assertFalse( admin.login(username,wrongPassword));
-    }
-    @Test
-    void logoutSuccess() {
-        Admin admin = new Admin ("userN","pass");
-        admin.login("userN","pass");
-        assertTrue(admin.logout() );
-
-    }
-    @Test
-    //the admin is already logged out
-    void logoutFailure() {
-        Admin admin = new Admin ("userN","pass");
-        admin.login("userN","pass");
-        admin.logout() ;
-        assertFalse(admin.logout());
-
-    }
-
-    @Test
-    void isLoggedInSuccess() {
-        Admin admin=new Admin ("name", "pass");
-        admin .login("name", "pass");
+    void testLogin() {
+        assertTrue( admin.login("username", "password"));
         assertTrue(admin.isLoggedIn());
     }
     @Test
-    void isLoggedInFailure() {
-        Admin admin=new Admin ("name", "pass");
+    void testLogout() {
+        admin.login("username", "password");
+        assertTrue(admin.logout());
         assertFalse(admin.isLoggedIn());
+    }
+    @Test
+    void testChangePassword() {
+        admin.login("username", "password");
+        admin.changePassword("newPass");
+        assertEquals("newPass", admin.getPassword());
+    }
+    @Test
+    void testChangeUsername() {
+        admin.login("username", "password");
+        admin.changeUsername("newUsername");
+        assertEquals("newUsername", admin.getUsername());
     }
 
     @Test
-    void getUsername() {
-        Admin admin = new Admin("userN", "pass");
-        assertEquals("userN", admin.getUsername());
+    void testIsLoggedInInitiallyFalse() {
+        assertFalse(admin.isLoggedIn());
     }
+    @Test
+    void testDefaultConstructor() {
+        Admin defaultAdmin = new Admin();
+
+        assertEquals(0, defaultAdmin.getAdminId(), "Default adminId should be 0");
+        assertNull(defaultAdmin.getUsername(), "Default username should be null");
+        assertNull(defaultAdmin.getPassword(), "Default password should be null");
+        assertFalse(defaultAdmin.isLoggedIn(), "Default loggedIn should be false");
+
+
+        assertFalse(defaultAdmin.login("any", "any"), "Login should fail ");
+        assertFalse(defaultAdmin.logout(), "Logout should fail ");
+    }
+
 }

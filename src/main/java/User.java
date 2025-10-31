@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 /**
  * Represents a user in the library system.
- * Each user has an ID, username, password, fine balance, borrowing status, and borrowed books.
+ * Each user has an ID, username, password, fine balance, borrowing status, array of borrowed books, and login status
  * Users cannot borrow books if they have unpaid fines.
  *
  * @author Nebal
@@ -15,6 +15,9 @@ public class User {
     private double fineBalance;
     private boolean canBorrow;
     private List<Book> borrowedBooks;
+    private boolean isLoggedIn;
+
+    public User(){}
 
     /**
      * Creates a new user with no fines and borrowing allowed.
@@ -30,29 +33,97 @@ public class User {
         this.fineBalance = 0;
         this.canBorrow = true;
         this.borrowedBooks = new ArrayList<>();
+        this.isLoggedIn = false;
     }
 
+
+    public boolean isLoggedIn() {
+        return isLoggedIn;
+    }
+    public void setCanBorrow(boolean canBorrow){
+        this.canBorrow=canBorrow;
+    }
     public int getUserId() {
         return userId;
     }
-
     public String getUsername() {
         return username;
     }
-
     public double getFineBalance() {
         return fineBalance;
     }
-
     public boolean canBorrow() {
         return canBorrow;
     }
-
     public List<Book> getBorrowedBooks() { return borrowedBooks; }
-
     public void setBorrowedBooks(Book book) {
         this.borrowedBooks.add(book);
     }
+    public void setLoggedIn(boolean loggedIn) {this.isLoggedIn = loggedIn;}
+    public String getPassword() {return this.password;}
+    public void setUsername(String newUsername) {this.username = newUsername;}
+    public void setPassword(String newPassword) {this.password = newPassword;}
+
+    /**
+     * Requests to change this user's username through the authentication system.
+     * Ensures that the new username is unique and updates all related records
+     * in the manager’s mappings.
+     *
+     * @param newUsername the new username to assign to this user
+     * @return true if the username was successfully changed; false otherwise
+     */
+    public boolean changeUsername(String newUsername) {
+        return Authentication.changeUsername(this.username, newUsername, UserManager.getInstance().getUsers(), UserManager.getInstance().usernameToId());
+    }
+
+    /**
+     * Requests to change this user's password through the authentication system.
+     * The authentication layer validates the input and applies the change
+     * directly to this admin's record.
+     *
+     * @param newPassword the new password to assign to this admin
+     * @return true if the password was successfully changed; false otherwise
+     */
+    public boolean changePassword(String newPassword) {
+        return Authentication.changePassword(this.username, newPassword, UserManager.getInstance().getUsers(), UserManager.getInstance().usernameToId());
+
+    }
+
+    /**
+     * Logs the user into the system using the provided username and password.
+     *
+     * @param username the user's username for authentication
+     * @param password the user's password for authentication
+     * @return true if login is successful, false otherwise
+     */
+    public boolean login(String username, String password) {
+        return Authentication.login(username, password, UserManager.getInstance().getUsers(), UserManager.getInstance().usernameToId());
+    }
+
+    /**
+     * Logs the user out of the system.
+     */
+    public boolean logout() {
+        return Authentication.logout(this.username, UserManager.getInstance().getUsers(),UserManager.getInstance().usernameToId());
+    }
+
+    /**
+     * Registers a new user in the system through the UserManager.
+     * Delegates the account creation to the Authentication class.
+     *
+     * @param username the desired username for the new user
+     * @param password the desired password for the new user
+     * @return true if the account was successfully created; false if the username
+     *         is already taken or the input is invalid
+     */
+    public boolean signUp(String username, String password) {
+        return Authentication.addAccount(username, password, UserManager.getInstance());
+    }
+
+
+
+
+/*
     /**
      * Adds a fine to the user.
      *
@@ -62,27 +133,27 @@ public class User {
      * @param amount the fine amount to add
      * @return true if the fine was added successfully, false if the amount
      *         was zero or negative
-     */
+     *//*
     public boolean addFine(double amount) {
         if (amount <= 0) return false;
         this.fineBalance += amount;
         canBorrow = false;
         return true;
-    }
-
+    }*/
+/*
     /**
      * Pays part or all of the fine.
      * Borrowing is allowed only when balance is 0.
      *
      * @param amount amount to pay
      * @return true if payment is valid, false otherwise
-     */
+     *//*
     public boolean payFine(double amount) {
         if (amount <= 0 || amount > fineBalance) return false;
         fineBalance -= amount;
         if (fineBalance == 0) canBorrow = true;
         return true;
     }
-
+    */
 
 }

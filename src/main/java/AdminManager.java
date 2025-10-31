@@ -1,67 +1,68 @@
-import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
- * Manages multiple administrators in the Library Management System.
- * Handles admin addition, login, logout, and listing.
- * Acts as the main service layer for admin-related operations.
+ * Stores and manages administrator accounts.
+ * Provides access to the map of all registered admins.
  *
  * @author Nebal
  * @version 1.0
  */
+
 public class AdminManager {
-    private ArrayList<Admin> admins = new ArrayList<>();
+    private static AdminManager instance = null;
+    private HashMap<Integer, Admin> admins = new HashMap<>();
+    private final HashMap<String, Integer> usernameToId = new HashMap<>();
+    private int nextAdminId = 1;
 
+    public AdminManager() {}
 
-    /**
-     * Adds a new administrator to the system.
-     *
-     * @param admin the Admin object to be added
-     */
-    public void addAdmin(Admin admin) {
-        admins.add(admin);
+    /** @return the single instance of AdminManager */
+   public static AdminManager getInstance() {
+        if (instance == null) instance = new AdminManager();
+        return instance;
+    }
+
+    /** Generates and returns the next admin ID */
+    protected int getNextAdminId() {
+        return nextAdminId++;
     }
 
     /**
-     * Attempts to log in an admin using the provided credentials.
-     *
-     * @param username the entered username
-     * @param password the entered password
-     * @return true if an admin with matching credentials logs in successfully, false otherwise
+     * Finds an admin by username (case-insensitive).
      */
-    public boolean login(String username, String password) {
-        for (Admin admin : admins) {
-            if (admin.login(username, password)) {
-                return true;
-            }
-        }
-        return false;
+   public Admin getAdminByUsername(String username) {
+        if (username == null) return null;
+        Integer id = usernameToId.get(username.toLowerCase());
+        return id == null ? null : admins.get(id);
     }
 
     /**
-     * Logs out the specified admin by username if they are currently logged in.
-     *
-     * @param username the username of the admin to log out
+     * Finds an admin by their ID.
      */
-    public boolean logout(String username) {
-        for (Admin admin : admins) {
-            if (admin.getUsername().equals(username) && admin.isLoggedIn()) {
-                admin.logout();
-                return true;
-            }
-        }
-        return false;
+    public Admin getAdminById(int id) {
+        return admins.get(id);
     }
 
     /**
-     * Returns a list of all registered administrator usernames.
-     *
-     * @return ArrayList of usernames
+     * @return all registered admins (by ID)
      */
-    public ArrayList<String> getAdminUsernames() {
-        ArrayList<String> usernames = new ArrayList<>();
-        for (Admin admin : admins) {
-            usernames.add(admin.getUsername());
-        }
-        return usernames;
+   public HashMap<Integer, Admin> getAdmins() {
+        return admins;
     }
+
+    public HashMap<String, Integer> usernameToId() {
+        return usernameToId;
+    }
+
+    /**
+     * Adds a new admin manually to the system.
+     *
+     * @param username the admin's username (must be unique)
+     * @param password the admin's password
+     * @return true if the admin was added successfully; false if username already exists
+     */
+    public boolean addAdmin( String username, String password) {
+        return Authentication.addAccount(username, password, this);
+    }
+
 }
