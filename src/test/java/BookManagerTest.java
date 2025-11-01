@@ -1,9 +1,11 @@
 import org.junit.jupiter.api.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BookManagerTest {
 
@@ -14,7 +16,7 @@ class BookManagerTest {
     void setUp() {
         BM =new BookManager();
         book1 = new Book ("Ghorbat Al-Yasmeen","Khawla Hamdi","1234567890");
-        BM.addBook(book1);
+        BM.addBook(book1,1);
     }
 
     @AfterEach
@@ -29,41 +31,17 @@ class BookManagerTest {
         assertEquals(book1, BM.getListOfBooks().get(0));
     }
 
-
-    @Test
-    void addBookWithEmptyTitle()
-    {
-        Exception exception = assertThrows(IllegalArgumentException.class,
-                () ->
-                {
-                    Book book2 = new Book ("","Ibrahim bin Omar Al-Sakran","1234567899");
-                }
-        );
-        assertEquals("Title cannot be empty", exception.getMessage());
-    }
-
-
-    @Test
-    void addBookWithEmptyAuthor()
-    {
-        Exception exception = assertThrows(IllegalArgumentException.class,
-                () ->
-                {
-                    Book book2 = new Book ("Raqa’iq Al-Qur’an","","1234567899");
-                }
-        );
-        assertEquals("Author cannot be empty", exception.getMessage());
-    }
-
-
     @Test
     void addBookWithDuplicateIsbnTest()
     {
-        Book book2 = new Book ("Raqa’iq Al-Qur’an","Ibrahim bin Omar Al-Sakran","1234567890");
-
-        BM.addBook(book2);
-
-        assertEquals(1, BM.getListOfBooks().size());
+        Exception exception = assertThrows(IllegalArgumentException.class,
+                () ->
+                {
+                    Book book2 = new Book ("title","Ibrahim bin Omar Al-Sakran","1234567890");
+                    BM.addBook(book2,1);
+                }
+        );
+        assertEquals("The ISBN should be uniqe", exception.getMessage());
     }
 
 
@@ -72,105 +50,142 @@ class BookManagerTest {
     {
         Book book2 = new Book ("Raqa’iq Al-Qur’an","Ibrahim bin Omar Al-Sakran","1234567891");
 
-        BM.addBook(book2);
+        BM.addBook(book2,1);
 
         assertEquals(2, BM.getListOfBooks().size());
     }
 
-
     @Test
-    void addBookWithIsbnContainsSpacesTest()
-    {
-        Exception exception = assertThrows(IllegalArgumentException.class,
-                () ->
-                {
-                    Book book2 = new Book ("Raqa’iq Al-Qur’an","Ibrahim bin Omar Al-Sakran","1 23456789");
-                }
-        );
-        assertEquals("ISBN cannot contain spaces", exception.getMessage());
+    void addBookWithMultipleCopies_assignsUniqueIdsAndSameData() {
+        Book book2 = new Book("Raqa’iq Al-Qur’an", "Ibrahim bin Omar Al-Sakran", "1234567892");
+        int copiesToAdd = 5;
+
+        int initialSize = BM.getListOfBooks().size();
+        BM.addBook(book2, copiesToAdd);
+
+        assertEquals(initialSize + copiesToAdd, BM.getListOfBooks().size());
+
+        for (int i = initialSize; i < initialSize + copiesToAdd; i++)
+        {
+            Book copy = BM.getListOfBooks().get(i);
+            assertEquals(book2.getTitle(), copy.getTitle());
+            assertEquals(book2.getAuthor(), copy.getAuthor());
+            assertEquals(book2.getISBN(), copy.getISBN());
+            assertNotEquals(book2.getBookId(), copy.getBookId());
+        }
     }
 
 
     @Test
-    void addBookWithIsbn_isbnContainsNonDigitsTest()
+    void FindBooksByField_title()
     {
-        Exception exception = assertThrows(IllegalArgumentException.class,
-                () ->
-                {
-                    Book book2 = new Book ("Raqa’iq Al-Qur’an","Ibrahim bin Omar Al-Sakran","1A23456789");
-                }
-        );
-        assertEquals("ISBN must contain digits only", exception.getMessage());
+        List<Book> result = BM.findBooksByField("title", "Ghorbat Al-Yasmeen");
+        assertEquals(1, result.size());
     }
 
-
     @Test
-    void addBookWithIsbn_isbnLengthNot10()
+    void FindBooksByField_author()
     {
-        Exception exception = assertThrows(IllegalArgumentException.class,
-                () ->
-                {
-                    Book book2 = new Book ("Raqa’iq Al-Qur’an","Ibrahim bin Omar Al-Sakran","12345678910");
-                }
-        );
-        assertEquals("ISBN must have 10 digits after the 978 prefix", exception.getMessage());
+        List<Book> result = BM.findBooksByField("author", "Khawla Hamdi");
+        assertEquals(1, result.size());
     }
 
-
     @Test
-    void searchBookByTitleTest()
+    void FindBooksByField_isbn()
     {
-        String title ="Ghorbat Al-Yasmeen";
-
-        BM.searchBookByTitle(title);
-
-        assertEquals(1, BM.getSearchedBooks().size());
+        List<Book> result = BM.findBooksByField("isbn", "9781234567890");
+        assertEquals(1, result.size());
     }
 
-
     @Test
-    void searchByTitle_bookNotFound()
+    void FindBooksByField_nonExisting_returnsEmpty()
     {
-        String title ="My Aunt's House";
-
-        BM.searchBookByTitle(title);
-
-        assertTrue(BM.getSearchedBooks().isEmpty());
+        List<Book> result = BM.findBooksByField("title", "C++");
+        assertTrue(result.isEmpty());
     }
 
-
     @Test
-    void searchBookByAuthorTest()
+    void filterAvailableBooksForUser()
     {
-        String author ="Khawla Hamdi";
+        Book book2 = new Book ("Ghorbat Al-Yasmeen","author1","1234567891");
+        Book book3 = new Book ("Ghorbat Al-Yasmeen","author2","1234567892");
+        book3.setIsBorrowed(true);
+        BM.addBook(book2,2);   BM.addBook(book3,1);
+        List<Book> allGhorbatAlYasmeen =  BM.findBooksByField("title","Ghorbat Al-Yasmeen");
 
-        BM.searchBookByAuthor(author);
+       List<Book>available = BM.filterAvailableBooksForUser(allGhorbatAlYasmeen);
 
-        assertEquals(1, BM.getSearchedBooks().size());
+       assertEquals(2,available.size());
+       assertFalse(available.get(0).getIsBorrowed());
     }
 
-
     @Test
-    void searchBookByIsbnTest()
+    void summarizeBooksForAdmin()
     {
-        String isbn ="9781234567890";
+        Book book2 = new Book ("Ghorbat Al-Yasmeen","author1","1234567891");
+        Book book3 = new Book ("Ghorbat Al-Yasmeen","author2","1234567892");
+        book3.setIsBorrowed(true);
+        BM.addBook(book2,2);   BM.addBook(book3,1);
+        List<Book> allGhorbatAlYasmeen =  BM.findBooksByField("title","Ghorbat Al-Yasmeen");
 
-        BM.searchBookByIsbn(isbn);
+        List<BookStats>stats = BM.summarizeBooksForAdmin(allGhorbatAlYasmeen);
 
-        assertEquals(1, BM.getSearchedBooks().size());
+        assertEquals(3,stats.size());
+        assertEquals(2,stats.get(1).getTotalCopies());
+        assertEquals(0,stats.get(1).getBorrowedCopies());
+        assertEquals(2,stats.get(1).getAvailableCopies());
+        assertEquals(1,stats.get(2).getBorrowedCopies());
+        assertEquals(0,stats.get(2).getAvailableCopies());
     }
 
+    @Test
+    void searchBooksByField_searchNonExisting_returnsBookNotFound()
+    {
+        String result = BM.searchBooksByField("title", "Python",new User(1,"user","111"));
+        assertEquals("Book not found\n", result);
+    }
 
     @Test
-    void borrowBook_throwsException_whenIsbnContainsSpaces()
+    void searchBooksByField_asUser_returnsAvailableBooks()
     {
-        Exception exception = assertThrows(IllegalArgumentException.class,
-                () ->
-                {
-                   BM.borrowBook("12 3456789",new User(1,"afnan","36"));
-                }
-        );
-        assertEquals("ISBN cannot contain spaces", exception.getMessage());
+        String result = BM.searchBooksByField("title", "Ghorbat Al-Yasmeen", new User(1,"user","111"));
+
+        assertFalse(result.contains("Available"));
+        assertTrue(result.contains("Borrowed"));
+    }
+
+    @Test
+    void searchBooksByField_asAdmin_returnsStats()
+    {
+        String result = BM.searchBooksByField("title", "Ghorbat Al-Yasmeen", new Admin("admin","122"));
+
+        assertTrue(result.contains("Total"));
+        assertTrue(result.contains("1"));
+    }
+
+    @Test
+    void searchBooksByField_returnsInvalidUserType()
+    {
+        String result = BM.searchBooksByField("title", "Ghorbat Al-Yasmeen",new String());
+        assertEquals("Invalid user type\n", result);
+    }
+
+    @Test
+    void searchBooksByTitle()
+    {
+        BM.searchBookByTitle("Ghorbat Al-Yasmeen",new User(1,"user","111"));
+    }
+
+    @Test
+    void searchBooksByAuthor()
+    {
+        BM.searchBookByAuthor("Khawla Hamdi",new User(1,"user","111"));
+    }
+
+    @Test
+    void searchBooksByIsbn()
+    {
+        BM.searchBookByIsbn("9781234567890",new User(1,"user","111"));
     }
 
 

@@ -1,10 +1,14 @@
 import java.time.LocalDate;
 
 public class Book {
+
+    private static int nextId = 1;
+    private final int bookId;
     private final String title;
     private final String author;
     private final String ISBN;
     private boolean isBorrowed;
+
     private LocalDate dueDate ;
     private boolean isOverdue;
     private double fine;
@@ -21,28 +25,44 @@ public class Book {
      */
     public Book (String title,String author,String isbnPart)
     {
-        if (title.isEmpty())
-        {
-            throw new IllegalArgumentException("Title cannot be empty");
-        }
-        this.title=title;
-
-        if (author.isEmpty())
-        {
-            throw new IllegalArgumentException("Author cannot be empty");
-        }
-        this.author=author;
-
+        this.bookId = nextId++;
+        this.title = validateTitle(title);
+        this.author = validateAuthor(author);
         String isbn = "978"+isbnPart;
-        validateIsbn(isbn);
-        this.ISBN = isbn;
+        this.ISBN = validateIsbn(isbn);
 
         this.isBorrowed = false;
         this.isOverdue = false;
         this.fine = 0.0;
     }
 
-    public static void validateIsbn(String isbn)
+    public Book(Book copyBook)
+    {
+        this.bookId = nextId++;
+        this.title = copyBook.title;
+        this.author = copyBook.author;
+        this.ISBN = copyBook.ISBN;
+        this.isBorrowed = copyBook.isBorrowed;
+    }
+
+    private String validateTitle(String title)
+    {
+        if (title.isEmpty())
+        {
+            throw new IllegalArgumentException("Title can't be empty");
+        }
+        return title;
+    }
+
+    private String validateAuthor(String author)
+    {
+        if (author.isEmpty()) {
+            throw new IllegalArgumentException("Author can't be empty");
+        }
+        return author;
+    }
+
+    public String  validateIsbn(String isbn)
     {
         if (isbn.contains(" "))
         {
@@ -56,66 +76,39 @@ public class Book {
         {
             throw new IllegalArgumentException("ISBN must have 10 digits after the 978 prefix");
         }
+
+        return isbn;
     }
 
-    /**
-     * @return the title of the book
-     */
-    public String getTitle()
+    public static int validateCopies(int copies)
     {
-        return title;
+        if (copies <= 0)
+            throw new IllegalArgumentException("Copies must be positive");
+
+        return copies;
     }
 
-    /**
-     * @return the author of the book
-     */
-    public String getAuthor()
-    {
-        return author;
-    }
+    public int getBookId() {return bookId;}
 
-    /**
-     * @return the full ISBN of the book
-     */
-    public String getISBN()
-    {
-        return ISBN;
-    }
+    public String getTitle() {return title;}
 
-    public boolean getIsBorrowed()
-    {
-        return isBorrowed;
-    }
+    public String getAuthor() {return author;}
 
-    public LocalDate getDueDate()
-    {
-       return this.dueDate;
-    }
+    public String getISBN() {return ISBN;}
 
-    public void setIsOverdue(boolean overdue)
-    {
-        this.isOverdue = overdue;
-    }
+    public boolean getIsBorrowed() {return isBorrowed;}
 
-    public double getFine()
-    {
-        return fine;
-    }
+    public LocalDate getDueDate() {return this.dueDate;}
 
-    public void setIsBorrowed(boolean status)
-    {
-        this.isBorrowed = status;
-    }
+    public void setIsOverdue(boolean overdue) {this.isOverdue = overdue;}
 
-    public void setDueDate(LocalDate dueDate)
-    {
-        this.dueDate = dueDate;
-    }
+    public double getFine() {return fine;}
 
-    public void setFine(double fine)
-    {
-        this.fine = fine;
-    }
+    public void setIsBorrowed(boolean status) {this.isBorrowed = status;}
+
+    public void setDueDate(LocalDate dueDate) {this.dueDate = dueDate;}
+
+    public void setFine(double fine) {this.fine = fine;}
 
 
     /**
@@ -125,9 +118,9 @@ public class Book {
     @Override
     public String toString()
     {
-        return String.format("Book{Title='%s', Author='%s', Isbn='%s'}", title,author, ISBN);
+        return String.format("%-15s %-25s %-20s %-10s",
+                ISBN, title, author, isBorrowed ? "Borrowed" : "Available");
     }
-
 
 
 }
