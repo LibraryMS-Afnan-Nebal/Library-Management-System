@@ -23,12 +23,6 @@ public class BookStats {
     public int getBorrowedCopies() {return borrowedCopies;}
     public int getAvailableCopies() {return availableCopies;}
 
-    @Override
-    public String toString()
-    {
-        return String.format("%-15s %-25s %-20s %-15s %-15s %-15s",
-                ISBN, title, author, totalCopies,borrowedCopies,availableCopies);
-    }
 
 
 

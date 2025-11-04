@@ -9,7 +9,6 @@ public class Book {
     private final String ISBN;
     private boolean isBorrowed;
 
-    private LocalDate dueDate ;
     private boolean isOverdue;
     private double fine;
 
@@ -45,7 +44,7 @@ public class Book {
         this.isBorrowed = copyBook.isBorrowed;
     }
 
-    private String validateTitle(String title)
+    static String validateTitle(String title)
     {
         if (title.isEmpty())
         {
@@ -54,7 +53,7 @@ public class Book {
         return title;
     }
 
-    private String validateAuthor(String author)
+    static String validateAuthor(String author)
     {
         if (author.isEmpty()) {
             throw new IllegalArgumentException("Author can't be empty");
@@ -62,7 +61,7 @@ public class Book {
         return author;
     }
 
-    public String  validateIsbn(String isbn)
+    public String validateIsbn(String isbn)
     {
         if (isbn.contains(" "))
         {
@@ -89,38 +88,12 @@ public class Book {
     }
 
     public int getBookId() {return bookId;}
-
     public String getTitle() {return title;}
-
     public String getAuthor() {return author;}
-
     public String getISBN() {return ISBN;}
-
     public boolean getIsBorrowed() {return isBorrowed;}
-
-    public LocalDate getDueDate() {return this.dueDate;}
-
     public void setIsOverdue(boolean overdue) {this.isOverdue = overdue;}
-
     public double getFine() {return fine;}
-
     public void setIsBorrowed(boolean status) {this.isBorrowed = status;}
-
-    public void setDueDate(LocalDate dueDate) {this.dueDate = dueDate;}
-
     public void setFine(double fine) {this.fine = fine;}
-
-
-    /**
-     * @return a string representation of the book
-     * including title, author, and ISBN
-     */
-    @Override
-    public String toString()
-    {
-        return String.format("%-15s %-25s %-20s %-10s",
-                ISBN, title, author, isBorrowed ? "Borrowed" : "Available");
-    }
-
-
 }
