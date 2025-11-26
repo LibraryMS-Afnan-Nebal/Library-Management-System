@@ -33,13 +33,11 @@ class ReminderServiceTest {
     }
 
     @AfterEach
-    void tearDown() {
-    }
+    void tearDown() {}
 
     @Test
     public void sendRemindersTest()
     {
-        //نضع Mock Observer حتى نراقب هل نادى update() ولا لا؟
         Observer mockObserver = mock(Observer.class);
         reminderService.addObserver(mockObserver);
 

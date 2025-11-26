@@ -46,7 +46,6 @@ public class EmailService {
             // Send email
             Transport.send(message);
 
-            System.out.println("Email sent successfully to "+ to);
 
         } catch (MessagingException e) {
             e.printStackTrace();
