@@ -9,7 +9,7 @@ public class Book {
     private final String ISBN;
     private boolean isBorrowed;
 
-    private boolean isOverdue;
+
     private double fine;
 
     /**
@@ -31,7 +31,6 @@ public class Book {
         this.ISBN = validateIsbn(isbn);
 
         this.isBorrowed = false;
-        this.isOverdue = false;
         this.fine = 0.0;
     }
 
@@ -92,7 +91,6 @@ public class Book {
     public String getAuthor() {return author;}
     public String getISBN() {return ISBN;}
     public boolean getIsBorrowed() {return isBorrowed;}
-    public void setIsOverdue(boolean overdue) {this.isOverdue = overdue;}
     public double getFine() {return fine;}
     public void setIsBorrowed(boolean status) {this.isBorrowed = status;}
     public void setFine(double fine) {this.fine = fine;}

@@ -11,6 +11,7 @@ import java.util.List;
 public class User {
     private int userId;
     private String username;
+    private String email;
     private String password ;
     private double fineBalance;
     private boolean canBorrow;
@@ -24,12 +25,14 @@ public class User {
      *
      * @param userId   the user's unique ID
      * @param username the user's name
+     * @param email the user's email
      * @param password the user's password
      */
-    public User(int userId,String username,String password){
+    public User(int userId,String username,String email,String password){
         this.userId = userId;
         this.username = username;
         this.password = password;
+        this.email = email;
         this.fineBalance = 0;
         this.canBorrow = true;
         this.borrowedBooks = new ArrayList<>();
@@ -48,6 +51,9 @@ public class User {
     }
     public String getUsername() {
         return username;
+    }
+    public String getEmail() {
+        return email;
     }
     public double getFineBalance() {
         return fineBalance;

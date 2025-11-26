@@ -174,40 +174,4 @@ public class BookManager   {
         System.out.print(searchBooksByField("isbn", isbn, person));
     }
 
-
-
-
-
-//    /**
-//     * Detects all books that are overdue and calculates fines for them.
-//     * <p>If a book is currently borrowed and its due date has passed,
-//     * it is marked as overdue, and a fine is calculated based on the
-//     * number of days past the due date.</p>
-//     *
-//     * @param currentDate the current date used to determine if a book is overdue
-//     * @return a list of books that are overdue
-//     * @since 0.0.2
-//     */
-//    public List<Book> detectOverdueBooks (LocalDate currentDate)
-//    {
-//        List <Book> overdueBooks = new ArrayList<>();
-//        for (Book book : listOfBooks)
-//        {
-//            if (book.getIsBorrowed())
-//            {
-//                // Difference between current date and due date (negative means overdue)
-//                double daysDifference  = ChronoUnit.DAYS.between(currentDate, book.getDueDate());
-//                if (daysDifference  < 0)
-//                {
-//                    book.setIsOverdue(true);
-//                    double fine = daysDifference  * -1;
-//                    book.setFine(fine);
-//                    overdueBooks.add(book);
-//                }
-//            }
-//        }
-//        System.out.println("Overdue status updated successfully.");
-//        return overdueBooks;
-//    }
-
 }

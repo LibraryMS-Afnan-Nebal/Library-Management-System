@@ -27,7 +27,7 @@ public class Authentication {
             if (um.usernameToId().containsKey(uname)) return false;
 
             int id = um.getNextUserId();
-            User u = new User(id, username, password);
+            User u = new User(id, username,"", password);
             um.getUsers().put(id, u);
             um.usernameToId().put(uname, id);
             return true;

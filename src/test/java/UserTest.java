@@ -19,7 +19,7 @@ class UserTest {
         manager.getUsers().clear();
         manager.usernameToId().clear();
 
-        user = new User(manager.getNextUserId(), "username", "password");
+        user = new User(manager.getNextUserId(), "username","email", "password");
         manager.getUsers().put(user.getUserId(), user);
         manager.usernameToId().put("username", user.getUserId());
 /*

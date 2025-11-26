@@ -11,8 +11,8 @@ public class LoanManagerTest {
     @BeforeEach
     void setUp() {
         BookManager.listOfBooks.clear();
-        LM = new LoanManager();
-        user = new User(1,"user","password");
+       // LM = new LoanManager();
+        user = new User(1,"user","email","password");
         BM = new BookManager();
         Book book1 = new Book("java","author1","1234567890");
         Book book2 = new Book("java","author2","1234567891");

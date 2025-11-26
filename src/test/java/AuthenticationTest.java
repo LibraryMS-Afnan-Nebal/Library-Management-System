@@ -22,7 +22,7 @@ class AuthenticationTest {
         adminManager.getAdmins().clear();
         adminManager.usernameToId().clear();
 
-        user = new User(userManager.getNextUserId(), "user1", "pass1");
+        user = new User(userManager.getNextUserId(), "user1","email1", "pass1");
         userManager.getUsers().put(user.getUserId(), user);
         userManager.usernameToId().put("user1", user.getUserId());
 
@@ -196,7 +196,7 @@ class AuthenticationTest {
     }
     @Test
     void changeUsernameFailure_UsernameTaken_ForAdminAndUser(){
-        userManager.getUsers().put(2, new User(2, "user2", "pass2"));
+        userManager.getUsers().put(2, new User(2, "user2","email2", "pass2"));
         userManager.usernameToId().put("user2", 2);
         assertFalse(Authentication.changeUsername("user1","user2",userManager.getUsers(),userManager.usernameToId()));
         assertTrue(userManager.usernameToId().containsKey("user1"));

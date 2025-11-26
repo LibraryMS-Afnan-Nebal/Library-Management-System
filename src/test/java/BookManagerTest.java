@@ -142,14 +142,14 @@ class BookManagerTest {
     @Test
     void searchBooksByField_searchNonExisting_returnsBookNotFound()
     {
-        String result = BM.searchBooksByField("title", "Python",new User(1,"user","111"));
+        String result = BM.searchBooksByField("title", "Python",new User(1,"user","email","111"));
         assertEquals("Book not found\n", result);
     }
 
     @Test
     void searchBooksByField_asUser_returnsAvailableBooks()
     {
-        String result = BM.searchBooksByField("title", "Ghorbat Al-Yasmeen", new User(1,"user","111"));
+        String result = BM.searchBooksByField("title", "Ghorbat Al-Yasmeen", new User(1,"user","email","111"));
 
         assertFalse(result.contains("Available"));
         assertTrue(result.contains("Borrowed"));
@@ -173,90 +173,22 @@ class BookManagerTest {
     @Test
     void searchBooksByTitle()
     {
-        BM.searchBookByTitle("Ghorbat Al-Yasmeen",new User(1,"user","111"));
+        BM.searchBookByTitle("Ghorbat Al-Yasmeen",new User(1,"user","email","111"));
     }
 
     @Test
     void searchBooksByAuthor()
     {
-        BM.searchBookByAuthor("Khawla Hamdi",new User(1,"user","111"));
+        BM.searchBookByAuthor("Khawla Hamdi",new User(1,"user","email","111"));
     }
 
     @Test
     void searchBooksByIsbn()
     {
-        BM.searchBookByIsbn("9781234567890",new User(1,"user","111"));
+        BM.searchBookByIsbn("9781234567890",new User(1,"user","email","111"));
     }
 
-//    @Test
-//    void borrowBook_whenBookExistsAndNotBorrowed()
-//    {
-//       assertTrue(BM.borrowBook("1234567890" , new User(1,"afnan","36"))               );
-//    }
-//
-//
-//    @Test
-//    void borrowBook_whenBookAlreadyBorrowed()
-//    {
-//       BM.borrowBook("1234567890" , new User(1,"afnan","36"));
-//       assertFalse(BM.borrowBook("1234567890" , new User(1,"afnan","36"))                              );
-//    }
-//
-//
-//    @Test
-//    void borrowBook_whenBookDoesNotExist()
-//    {
-//        assertFalse(BM.borrowBook("1234567895",new User(1,"afnan","36")));
-//    }
-//
-//
-//    @Test
-//    void detectOverdueBooks_whenNoBooksBorrowed()
-//    {
-//        List<Book> overdueBooks = BM.detectOverdueBooks(LocalDate.now());
-//        assertTrue(overdueBooks.isEmpty());
-//    }
-//
-//
-//    @Test
-//    void detectOverdueBooks_whenAllBooksWithinDueDate()
-//    {
-//        BM.borrowBook("1234567890",new User(1,"afnan","36"));
-//        LocalDate today = LocalDate.now();
-//        LocalDate tomorrow = today.plusDays(1);
-//
-//        List<Book> overdueBooks = BM.detectOverdueBooks(tomorrow);
-//
-//        assertTrue(overdueBooks.isEmpty());
-//    }
-//
-//
-//    @Test
-//    void detectOverdueBooks_whenBookPastDueDate()
-//    {
-//        BM.borrowBook("1234567890",new User(1,"afnan","36"));
-//        LocalDate today = LocalDate.now();
-//        LocalDate tomorrow = today.plusDays(30);
-//
-//        List <Book> overdueBooks = BM.detectOverdueBooks(tomorrow);
-//
-//        assertEquals(1,overdueBooks.size());
-//        assertTrue(overdueBooks.get(0).getFine() > 0);
-//    }
-//
-//    @Test
-//    void detectOverdueBooks_shouldCalculateFineCorrectly_whenBookIsOverdue()
-//    {
-//        BM.borrowBook("1234567890",new User(1,"afnan","36"));
-//        LocalDate today = LocalDate.now();
-//        LocalDate tomorrow = today.plusDays(30);
-//
-//        List <Book> overdueBooks = BM.detectOverdueBooks(tomorrow);
-//        double expectedFine = 2;
-//        double actualFine = overdueBooks.get(0).getFine();
-//
-//        assertEquals(expectedFine,actualFine);
-//    }
+
 
 
 

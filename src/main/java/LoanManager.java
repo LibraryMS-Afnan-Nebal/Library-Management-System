@@ -3,23 +3,43 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LoanManager {
+
+    private static LoanManager instance = null;   // singleton instance
     private List<Loan> listOfLoans;
-    public LoanManager() {listOfLoans = new ArrayList<>();}
-    public List<Loan>getLoanList(){return this.listOfLoans;}
+
+    private LoanManager()
+    {
+        listOfLoans = new ArrayList<>();
+    }
+    public static LoanManager getInstance()
+    {
+        if (instance == null)
+            instance = new LoanManager();
+        return instance;
+    }
+
+    public void setListOfLoans(Loan loan)
+    {
+        this.listOfLoans.add(loan);
+    }
 
     public boolean borrowBook(String title, String author, User user) {
         Book.validateTitle(title);
         Book.validateAuthor(author);
-        if (user == null) {
+        if (user == null)
+        {
             System.out.println("User cannot be null");
             return false;
         }
 
         boolean found = false;
-        for (Book book : BookManager.listOfBooks) {
-            if (book.getTitle().equalsIgnoreCase(title) && book.getAuthor().equalsIgnoreCase(author)) {
+        for (Book book : BookManager.listOfBooks)
+        {
+            if (book.getTitle().equalsIgnoreCase(title) && book.getAuthor().equalsIgnoreCase(author))
+            {
                 found = true;
-                if (!book.getIsBorrowed()) {
+                if (!book.getIsBorrowed())
+                {
                     book.setIsBorrowed(true);
                     Loan loan = new Loan(book, user);
                     listOfLoans.add(loan);
@@ -29,9 +49,10 @@ public class LoanManager {
                 }
             }
         }
-        if (found) {
+        if (found)
             System.out.println("Sorry, all copies of this book are currently borrowed");
-        } else System.out.println("Book with this title and author not found");
+        else
+            System.out.println("Book with this title and author not found");
         return false;
     }
 
@@ -41,7 +62,8 @@ public class LoanManager {
         if (user == null) return false;
         boolean foundBook = false;
 
-        for (Book book : user.getBorrowedBooks()) {
+        for (Book book : user.getBorrowedBooks())
+        {
             if (book.getTitle().equalsIgnoreCase(title) && book.getAuthor().equalsIgnoreCase(author))
             {
                 foundBook = true;
@@ -65,7 +87,33 @@ public class LoanManager {
 
         if (!foundBook)
             System.out.println("You didn’t borrow this book.");
-
         return false;
     }
+
+
+    public List<Loan> detectOverdueBooks()
+    {
+        if (listOfLoans.isEmpty())
+        {
+            System.out.println("There are no loans");
+            return null;
+        }
+
+        List<Loan> overdueLoans = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+        for(Loan loan : listOfLoans )
+        {
+            if (today.isAfter(loan.getDueDate()))
+            {
+                loan.setIsOverdue(true);
+                overdueLoans.add(loan);
+            }
+        }
+        return overdueLoans;
+    }
+
+
+
+
+
 }

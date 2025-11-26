@@ -1,0 +1,33 @@
+import java.util.*;
+
+public class ReminderService extends Observable  {
+    private final LoanManager loanManager;
+    public ReminderService(LoanManager loanManager)
+    {
+        this.loanManager = loanManager;
+    }
+
+    public void sendReminders()
+    {
+        List <Loan> overdueLoans = loanManager.detectOverdueBooks();
+
+        Map<User, List<Loan>> loansByUser = new HashMap<>();
+        for (Loan loan : overdueLoans)
+        {
+            loansByUser.computeIfAbsent(loan.getUser(), k -> new ArrayList<>()).add(loan);
+        }
+
+        for (Map.Entry<User, List<Loan>> entry : loansByUser.entrySet())
+        {
+            User user = entry.getKey();
+            int overdueCount = entry.getValue().size();
+            String message = "You have " + overdueCount + " overdue book(s).";
+            setChanged();
+            notifyObservers(new UserMessage(user, message));
+        }
+    }
+}
+
+
+
+

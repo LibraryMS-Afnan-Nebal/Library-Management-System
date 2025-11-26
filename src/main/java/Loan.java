@@ -9,6 +9,7 @@ public class Loan {
     private LocalDate dueDate;
     private LocalDate returnDate;
     private boolean returned;
+    private boolean isOverdue;
 
     public Loan(Book book ,User user)
     {
@@ -19,14 +20,17 @@ public class Loan {
         this.dueDate = LocalDate.now().plusDays(28);
         this.returnDate = null;
         this.returned = false;
+        this.isOverdue = false;
     }
 
     public User getUser() {return this.user;}
     public Book getBook() {return this.book;}
     public LocalDate getDueDate() {return this.dueDate;}
+    public boolean getReturned() {return this.returned;}
+    public LocalDate getReturnDate() {return this.returnDate;}
+    public boolean getIsOverdue() {return isOverdue;}
     public void setDueDate(LocalDate dueDate) {this.dueDate = dueDate;}
     public void setReturned(boolean returned) {this.returned = returned;}
     public void setReturnDate(LocalDate now) {this.returnDate = now; }
-    public boolean getReturned() {return this.returned;}
-    public LocalDate getReturnDate() {return this.returnDate;}
+    public void setIsOverdue(boolean overdue) {this.isOverdue = overdue;}
 }
