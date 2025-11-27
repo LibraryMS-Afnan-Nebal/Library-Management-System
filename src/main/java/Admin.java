@@ -90,6 +90,18 @@ public class Admin {
         return Authentication.logout(this.username, AdminManager.getInstance().getAdmins(),AdminManager.getInstance().usernameToId());
     }
 
+    /**
+     * Allows an admin to unregister a user.
+     * The admin must be logged in to perform this action.
+     *
+     * @param userId the ID of the user to unregister
+     * @return true if the user was removed, false otherwise
+     */
+    public boolean unregisterUser(int userId) {
+        if (!this.isLoggedIn()) return false;
+
+        return UserManager.getInstance().unregisterUser(userId);
+    }
 
 
 }
