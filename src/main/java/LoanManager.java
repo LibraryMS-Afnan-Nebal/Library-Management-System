@@ -1,4 +1,5 @@
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +40,7 @@ public class LoanManager {
                 }
             }
         }
-        
+
         boolean found = false;
         for (Book book : BookManager.listOfBooks) {
             if (book.getTitle().equalsIgnoreCase(title) && book.getAuthor().equalsIgnoreCase(author)) {
@@ -83,12 +84,11 @@ public class LoanManager {
                             loan.getBook().equals(book) &&
                             !loan.getReturned()) {
 
-
                         loan.setReturnDate(LocalDate.now());
                         //new
-                        accrueFinesForLoan(loan, 10, returnDate);
+                        accrueFinesForLoan(loan, 10, LocalDate.now());
                         loan.setReturned(true);
-
+                        book.setIsBorrowed(false);
                         user.getBorrowedBooks().remove(book);
 
                         System.out.println("You successfully returned the book.");

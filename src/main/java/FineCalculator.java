@@ -21,6 +21,7 @@ public class FineCalculator {
     }
 
     // Estimate ongoing fine for reminders (does not mutate loan/user)
+    //use this in mocking
     public double estimateOngoingFine(Loan loan, double baseRatePerDay) {
         LocalDate dueDate = loan.getDueDate();
         LocalDate today = LocalDate.now();

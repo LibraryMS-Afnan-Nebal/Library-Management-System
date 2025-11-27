@@ -36,6 +36,7 @@ public class Loan {
     public boolean getReturned() {return this.returned;}
     public LocalDate getReturnDate() {return this.returnDate;}
     // new
+    public int getLoanId() { return loanId; }
     public LocalDate getLastAccruedDate() { return lastAccruedDate; }
     public void setLastAccruedDate(LocalDate lastAccruedDate) { this.lastAccruedDate = lastAccruedDate; }
 }
