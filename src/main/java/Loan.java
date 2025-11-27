@@ -10,6 +10,9 @@ public class Loan {
     private LocalDate returnDate;
     private boolean returned;
 
+    // NEW: track last date fines were accrued (init to dueDate)
+    private LocalDate lastAccruedDate;
+
     public Loan(Book book ,User user)
     {
         this.loanId = nextId++;
@@ -19,7 +22,10 @@ public class Loan {
         this.dueDate = LocalDate.now().plusDays(28);
         this.returnDate = null;
         this.returned = false;
+        //new
+        this.lastAccruedDate = this.dueDate;
     }
+
 
     public User getUser() {return this.user;}
     public Book getBook() {return this.book;}
@@ -29,4 +35,7 @@ public class Loan {
     public void setReturnDate(LocalDate now) {this.returnDate = now; }
     public boolean getReturned() {return this.returned;}
     public LocalDate getReturnDate() {return this.returnDate;}
+    // new
+    public LocalDate getLastAccruedDate() { return lastAccruedDate; }
+    public void setLastAccruedDate(LocalDate lastAccruedDate) { this.lastAccruedDate = lastAccruedDate; }
 }

@@ -16,7 +16,10 @@ public class User {
     private boolean canBorrow;
     private List<Book> borrowedBooks;
     private boolean isLoggedIn;
-
+///////////////
+    private FineCalculator fineCalculator;
+////////
+    private int totalBorrowedCount = 0;
     public User(){}
 
     /**
@@ -34,6 +37,9 @@ public class User {
         this.canBorrow = true;
         this.borrowedBooks = new ArrayList<>();
         this.isLoggedIn = false;
+        /////
+        this.fineCalculator = new FineCalculator(new RegularFineStrategy());
+
     }
 
 
@@ -63,7 +69,14 @@ public class User {
     public String getPassword() {return this.password;}
     public void setUsername(String newUsername) {this.username = newUsername;}
     public void setPassword(String newPassword) {this.password = newPassword;}
-
+////////////
+public FineCalculator getFineCalculator() {
+    return fineCalculator;
+}
+///////
+public int getTotalBorrowedCount() {
+    return totalBorrowedCount;
+}
     /**
      * Requests to change this user's username through the authentication system.
      * Ensures that the new username is unique and updates all related records
@@ -120,40 +133,46 @@ public class User {
         return Authentication.addAccount(username, password, UserManager.getInstance());
     }
 
-
-
-
-/*
+//new
     /**
-     * Adds a fine to the user.
-     *
-     * The fine amount must be positive. Adding a fine will also disable
-     * the user's ability to borrow books.
-     *
-     * @param amount the fine amount to add
-     * @return true if the fine was added successfully, false if the amount
-     *         was zero or negative
-     *//*
-    public boolean addFine(double amount) {
+     * Adds an arbitrary fine amount to the user's balance (used by accrual).
+     */
+    public boolean addFineAmount(double amount) {
         if (amount <= 0) return false;
         this.fineBalance += amount;
-        canBorrow = false;
+        if (this.fineBalance > 0) this.canBorrow = false;
         return true;
-    }*/
-/*
+    }
+
+    ///////////
+public boolean addFine(Loan loan) {
+    // let's say books always use 10 NIS/day
+    double fine = fineCalculator.calculateFine(loan, 10);
+    if (fine > 0) {
+        return addFineAmount(fine);
+    }
+    return false;
+}
+/// //
+public void incrementTotalBorrowedCount() {
+    totalBorrowedCount++;
+}
+
+
+
     /**
      * Pays part or all of the fine.
      * Borrowing is allowed only when balance is 0.
      *
      * @param amount amount to pay
      * @return true if payment is valid, false otherwise
-     *//*
+     */
     public boolean payFine(double amount) {
         if (amount <= 0 || amount > fineBalance) return false;
         fineBalance -= amount;
         if (fineBalance == 0) canBorrow = true;
         return true;
     }
-    */
+
 
 }
