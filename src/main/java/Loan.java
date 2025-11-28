@@ -4,20 +4,24 @@ public class Loan {
     private static int nextId = 1;
     private int loanId;
     private User user;
-    private Book book;
+   // private Book book;
+    //new
+    private Media media;
     private LocalDate borrowDate;
     private LocalDate dueDate;
     private LocalDate returnDate;
     private boolean returned;
     private LocalDate lastAccruedDate;//track last date fines were accrued (init to dueDate)
 
-    public Loan(Book book ,User user)
+    //updated
+    public Loan(Media media,User user)
     {
         this.loanId = nextId++;
-        this.book = book;
+        this.media = media;
         this.user = user;
         this.borrowDate = LocalDate.now();
-        this.dueDate = LocalDate.now().plusDays(28);
+       //new
+        this.dueDate = LocalDate.now().plusDays(media.getLoanDurationDays());
         this.returnDate = null;
         this.returned = false;
         this.lastAccruedDate = this.dueDate;
@@ -25,15 +29,16 @@ public class Loan {
 
 
     public User getUser() {return this.user;}
-    public Book getBook() {return this.book;}
+    //new
+    public Media getMedia() { return media; }
     public LocalDate getDueDate() {return this.dueDate;}
     public LocalDate getReturnDate() {return this.returnDate;}
-    public boolean getReturned() {return this.returned;}
-    public int getLoanId() { return loanId; }
-    public LocalDate getLastAccruedDate() { return lastAccruedDate; }
     public void setDueDate(LocalDate dueDate) {this.dueDate = dueDate;}
     public void setReturned(boolean returned) {this.returned = returned;}
     public void setReturnDate(LocalDate now) {this.returnDate = now; }
+    public boolean getReturned() {return this.returned;}
+    public int getLoanId() { return loanId; }
+    public LocalDate getLastAccruedDate() { return lastAccruedDate; }
     public void setLastAccruedDate(LocalDate lastAccruedDate) { this.lastAccruedDate = lastAccruedDate; }
 
 }

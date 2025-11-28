@@ -18,6 +18,8 @@ public class LoanManager {
 
     public List<Loan>getLoanList(){return this.listOfLoans;}
 
+    // this is replaced with borrowMedia
+    /*
     public boolean borrowBook(String title, String author, User user) {
         Book.validateTitle(title);
         Book.validateAuthor(author);
@@ -66,45 +68,68 @@ public class LoanManager {
         else
             System.out.println("Book with this title and author not found");
         return false;
-    }
+    }*/
 
-    public boolean returnBook(String title, String author, User user)
-    {
-        Book.validateTitle(title);
-        Book.validateAuthor(author);
-        if (user == null) return false;
-        boolean foundBook = false;
+    public boolean borrow(Media media, User user) {
 
-        for (Book book : new ArrayList<>(user.getBorrowedBooks())) {
-            if (book.getTitle().equalsIgnoreCase(title) &&
-                    book.getAuthor().equalsIgnoreCase(author)) {
-                foundBook = true;
-                book.setIsBorrowed(false);
+        if (media == null || user == null) return false;
 
-                for (Loan loan : listOfLoans) {
-                    if (loan.getUser().equals(user) &&
-                            loan.getBook().equals(book) &&
-                            !loan.getReturned()) {
+        // Rule 1: User must have no fines
+        if (user.getFineBalance() > 0) {
+            System.out.println("You must pay your fines before borrowing.");
+            return false;
+        }
 
-                        loan.setReturnDate(LocalDate.now());
-                        //new
-                        accrueFinesForLoan(loan, 10, LocalDate.now());
-                        loan.setReturned(true);
-                        book.setIsBorrowed(false);
-                        user.getBorrowedBooks().remove(book);
+        // Rule 2: User must not have overdue items
+        for (Loan loan : listOfLoans) {
+            if (loan.getUser().equals(user) && !loan.getReturned() &&
+                    loan.getDueDate().isBefore(LocalDate.now())) {
 
-                        System.out.println("You successfully returned the book.");
-                        return true;
-                    }
-                }
-
-                System.out.println("Book found but no matching loan record — data inconsistency!");
+                System.out.println("Borrowing blocked: You have overdue items.");
                 return false;
             }
         }
 
-        if (!foundBook)
-            System.out.println("You didn’t borrow this book.");
+        // Rule 3: Media must be available
+        if (media.getIsBorrowed()) {
+            System.out.println("This item is currently borrowed.");
+            return false;
+        }
+
+        // Borrowing logic
+        media.setIsBorrowed(true);
+        Loan loan = new Loan(media, user);
+        listOfLoans.add(loan);
+
+        user.addBorrowedMedia(media);
+
+        System.out.println("Borrowed successfully. Return by: " + loan.getDueDate());
+        return true;
+    }
+
+    public boolean returnMedia(Media media, User user) {
+
+        if (media == null || user == null) return false;
+
+        for (Loan loan : listOfLoans) {
+            if (loan.getUser().equals(user) &&
+                    loan.getMedia().equals(media) &&
+                    !loan.getReturned()) {
+
+                media.setIsBorrowed(false);
+
+                loan.setReturnDate(LocalDate.now());
+                accrueFinesForLoan(loan, media.getDailyFineRate(), LocalDate.now());
+                loan.setReturned(true);
+
+                user.removeBorrowedMedia(media);
+
+                System.out.println("Returned successfully.");
+                return true;
+            }
+        }
+
+        System.out.println("You did not borrow this item.");
         return false;
     }
 

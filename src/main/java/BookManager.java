@@ -4,7 +4,7 @@ import java.util.*;
 
 public class BookManager   {
     static List<Book> listOfBooks = new ArrayList<>();
-    public List<Book> getListOfBooks() {return listOfBooks;}
+    public static List<Book> getListOfBooks() {return listOfBooks;}
 
     /**
      * Adds a book to the library with a unique ISBN
