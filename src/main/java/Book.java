@@ -1,13 +1,13 @@
 import java.time.LocalDate;
 
-public class Book {
+public class Book extends Media{
 
     private static int nextId = 1;
     private final int bookId;
-    private final String title;
+   // private final String title;
     private final String author;
     private final String ISBN;
-    private boolean isBorrowed;
+   // private boolean isBorrowed;
 
     /**
      * Creates a new Book with the given title, author, and ISBN part.
@@ -21,21 +21,29 @@ public class Book {
      */
     public Book (String title,String author,String isbnPart)
     {
+        super(title);
         this.bookId = nextId++;
-        this.title = validateTitle(title);
         this.author = validateAuthor(author);
         String isbn = "978"+isbnPart;
         this.ISBN = validateIsbn(isbn);
-        this.isBorrowed = false;
     }
 
-    public Book(Book copyBook)
-    {
+    @Override
+    public int getLoanDurationDays() {
+        return 28;
+    }
+
+    @Override
+    public double getDailyFineRate() {
+        return 10;
+    }
+
+    public Book(Book copy) {
+        super(copy.getTitle());
         this.bookId = nextId++;
-        this.title = copyBook.title;
-        this.author = copyBook.author;
-        this.ISBN = copyBook.ISBN;
-        this.isBorrowed = copyBook.isBorrowed;
+        this.author = copy.author;
+        this.ISBN = copy.ISBN;
+        this.setIsBorrowed(copy.getIsBorrowed());
     }
 
     static String validateTitle(String title)
@@ -82,9 +90,9 @@ public class Book {
     }
 
     public int getBookId() {return bookId;}
-    public String getTitle() {return title;}
+    public String getTitle() {return  super.getTitle();}
     public String getAuthor() {return author;}
     public String getISBN() {return ISBN;}
-    public boolean getIsBorrowed() {return isBorrowed;}
-    public void setIsBorrowed(boolean status) {this.isBorrowed = status;}
+    public boolean getIsBorrowed() {return super.getIsBorrowed();}
+    public void setIsBorrowed(boolean status) {super.setIsBorrowed(status);}
 }

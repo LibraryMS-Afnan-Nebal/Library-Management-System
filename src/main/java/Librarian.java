@@ -14,6 +14,7 @@ public class Librarian {
         this.loanManager = LoanManager.getInstance();
     }
 
+    /// this should be updated to detect both overdue books & cds
     public List<Loan> detectOverdueBooks()
     {
         if (loanManager.getLoanList().isEmpty())

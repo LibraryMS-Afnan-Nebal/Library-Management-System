@@ -16,7 +16,8 @@ public class User {
     private String password ;
     private double fineBalance;
     private boolean canBorrow;
-    private List<Book> borrowedBooks;
+    //new
+    private List<Media> borrowedMedia;
     private boolean isLoggedIn;
     private FineCalculator fineCalculator;
     private int totalBorrowedCount = 0;
@@ -39,7 +40,7 @@ public class User {
         this.email = email;
         this.fineBalance = 0;
         this.canBorrow = true;
-        this.borrowedBooks = new ArrayList<>();
+        this.borrowedMedia = new ArrayList<>();
         this.isLoggedIn = false;
         this.fineCalculator = new FineCalculator(new RegularFineStrategy());
 
@@ -72,12 +73,15 @@ public class User {
         return canBorrow;
     }
 
-    public List<Book> getBorrowedBooks() {
-        return borrowedBooks;
+    //new
+    public List<Media> getBorrowedMedia() {
+        return borrowedMedia;
     }
-
-    public void setBorrowedBooks(Book book) {
-        this.borrowedBooks.add(book);
+    public void addBorrowedMedia(Media m) {
+        this.borrowedMedia.add(m);
+    }
+    public void removeBorrowedMedia(Media m) {
+        borrowedMedia.remove(m);
     }
 
     public void setLoggedIn(boolean loggedIn) {
