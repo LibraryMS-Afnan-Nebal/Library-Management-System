@@ -75,6 +75,49 @@ public class UserManager{
         }
     }
 
+    /**
+     * Checks if a user can be unregistered.
+     * A user can only be removed if they have:
+     * - No unpaid fines
+     * - No active (not returned) loans
+     *
+     * @param user the user to check
+     * @return true if the user can be unregistered, false otherwise
+     */
+    public boolean canUnregister(User user) {
+        if (user == null) return false;
+        if (user.getFineBalance() > 0) {
+            return false;
+        }
+        for (Loan loan : LoanManager.getInstance().getLoanList()) {
+            if (loan.getUser().equals(user) && !loan.getReturned()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
+    /**
+     * Removes a user from the system if they meet the conditions
+     * (no unpaid fines and no active loans).
+     *
+     * @param userId the ID of the user to remove
+     * @return true if the user was successfully removed, false if not
+     */
+    public boolean unregisterUser(int userId) {
+        User user = users.get(userId);
+        if (user == null) return false;
+        if (!canUnregister(user)) {
+            return false;
+        }
+        users.remove(userId);
+        usernameToId.remove(user.getUsername().toLowerCase());
+
+        return true;
+    }
+
 /*
      /**
       * Attempts to borrow a book for the specified user while enforcing borrowing restrictions.
