@@ -201,14 +201,4 @@ public class User {
         return true;
     }
 
-    public boolean hasOverdueBooks() {
-        for (Loan loan : LoanManager.getInstance().getLoanList()) {
-            if (loan.getUser().equals(this)) {
-                if (!loan.getReturned() && loan.getDueDate().isBefore(LocalDate.now())) {
-                    return true; // overdue
-                }
-            }
-        }
-        return false;
-    }
 }

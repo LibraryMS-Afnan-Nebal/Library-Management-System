@@ -1,5 +1,6 @@
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 public class FineCalculator {
     private FineStrategy fineStrategy;
@@ -21,14 +22,19 @@ public class FineCalculator {
     }
 
     // Estimate ongoing fine for reminders (does not mutate loan/user)
-    ///////////////////////////////////////////use this in mocking
-    public double estimateOngoingFine(Loan loan, double baseRatePerDay) {
-        LocalDate dueDate = loan.getDueDate();
-        LocalDate today = LocalDate.now();
-        long overdueDays = ChronoUnit.DAYS.between(dueDate, today);
-        if (overdueDays <= 0) return 0;
-        double baseFine = overdueDays * baseRatePerDay;
-        return applyStrategy(baseFine);
+    public double estimateOngoingFine(List<Loan> loans, double baseRatePerDay) {
+       if (loans.isEmpty())return 0.0;
+       double fines = 0.0;
+       for(Loan loan:loans)
+       {
+           LocalDate dueDate = loan.getDueDate();
+           LocalDate today = LocalDate.now();
+           long overdueDays = ChronoUnit.DAYS.between(dueDate, today);
+           if (overdueDays <= 0) return 0;
+           double baseFine = overdueDays * baseRatePerDay;
+           fines+= applyStrategy(baseFine);
+       }
+       return fines;
     }
     // Keep the final-return calculation (optional)
     public double calculateFine(Loan loan, double baseRatePerDay) {

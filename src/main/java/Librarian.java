@@ -16,23 +16,12 @@ public class Librarian {
 
     public List<Loan> detectOverdueBooks()
     {
-        if (loanManager.getLoanList().isEmpty())
+        List<Loan> listOfOverdueLoans = loanManager.getOverdueLoans();
+        for(Loan loan : listOfOverdueLoans)
         {
-            System.out.println("There are no loans");
-            return null;
+            loanManager.accrueFines(10, loan);//To calculate fines
         }
-
-        List<Loan> overdueLoans = new ArrayList<>();
-        LocalDate today = LocalDate.now();
-        for(Loan loan : loanManager.getLoanList() )
-        {
-            if (today.isAfter(loan.getDueDate()))
-            {
-                overdueLoans.add(loan);
-                loanManager.accrueFines(10,loan);//To calculate fines
-            }
-        }
-        return overdueLoans;
+        return listOfOverdueLoans;
     }
 }
  

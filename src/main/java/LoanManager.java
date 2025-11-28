@@ -108,6 +108,24 @@ public class LoanManager {
         return false;
     }
 
+    public List<Loan> getOverdueLoans()
+    {
+        if (listOfLoans.isEmpty())
+        {
+            System.out.println("There are no loans");
+            return null;
+        }
+
+        List<Loan> overdueLoans = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+        for(Loan loan : listOfLoans )
+        {
+            if (today.isAfter(loan.getDueDate()))
+                overdueLoans.add(loan);
+        }
+        return overdueLoans;
+    }
+
     /**
      * Accrues fines for all overdue loans up to today.
      * baseRatePerDay for books = 10, for CDs = 20, etc.
@@ -131,7 +149,6 @@ public class LoanManager {
 
         System.out.println("Accrued " + finalFine + " NIS for user " + user.getUsername()
                 + " on loan " + loan.getLoanId() + " (" + daysToAccrue + " day(s)).");
-
     }
 
     /**
