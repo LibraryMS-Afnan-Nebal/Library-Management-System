@@ -108,56 +108,30 @@ public class LoanManager {
         return false;
     }
 
-    public List<Loan> detectOverdueBooks()
-    {
-        if (listOfLoans.isEmpty())
-        {
-            System.out.println("There are no loans");
-            return null;
-        }
-
-        List<Loan> overdueLoans = new ArrayList<>();
-        LocalDate today = LocalDate.now();
-        for(Loan loan : listOfLoans )
-        {
-            if (today.isAfter(loan.getDueDate()))
-            {
-                loan.setIsOverdue(true);
-                overdueLoans.add(loan);
-            }
-        }
-        return overdueLoans;
-    }
-
     /**
      * Accrues fines for all overdue loans up to today.
      * baseRatePerDay for books = 10, for CDs = 20, etc.
      */
-    public void accrueFines(double baseRatePerDay) {
+    public void accrueFines(double baseRatePerDay , Loan loan) {
         LocalDate today = LocalDate.now();
 
-        ////////////this should be replaced with the array of overdue loans
-        for (Loan loan : listOfLoans) {
-            if (loan.getReturned()) continue;
-            if (!today.isAfter(loan.getDueDate())) continue;
+        LocalDate lastAccrued = loan.getLastAccruedDate();
+        // daysToAccrue = days between lastAccrued (exclusive) and today (inclusive)
+        long daysToAccrue = ChronoUnit.DAYS.between(lastAccrued, today);
+        if (daysToAccrue <= 0) return;
 
-            LocalDate lastAccrued = loan.getLastAccruedDate();
-            // daysToAccrue = days between lastAccrued (exclusive) and today (inclusive)
-            long daysToAccrue = ChronoUnit.DAYS.between(lastAccrued, today);
-            if (daysToAccrue <= 0) continue;
+        double baseFine = daysToAccrue * baseRatePerDay;
+        User user = loan.getUser();
+        double finalFine = user.getFineCalculator().applyStrategy(baseFine);
 
-            double baseFine = daysToAccrue * baseRatePerDay;
-            User user = loan.getUser();
-            double finalFine = user.getFineCalculator().applyStrategy(baseFine);
+        user.addFineAmount(finalFine);
 
-            user.addFineAmount(finalFine);
+        // move lastAccruedDate forward to today to avoid double counting
+        loan.setLastAccruedDate(today);
 
-            // move lastAccruedDate forward to today to avoid double counting
-            loan.setLastAccruedDate(today);
+        System.out.println("Accrued " + finalFine + " NIS for user " + user.getUsername()
+                + " on loan " + loan.getLoanId() + " (" + daysToAccrue + " day(s)).");
 
-            System.out.println("Accrued " + finalFine + " NIS for user " + user.getUsername()
-                    + " on loan " + loan.getLoanId() + " (" + daysToAccrue + " day(s)).");
-        }
     }
 
     /**

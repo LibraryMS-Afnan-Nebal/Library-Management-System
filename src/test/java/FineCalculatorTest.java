@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FineCalculatorTest {
     static class DummyUser extends User {
-        public DummyUser() { super(122, "dummy","pass"); }
+        public DummyUser() { super(122, "dummy","email","pass"); }
     }
     static class DummyBook extends Book {
         public DummyBook() { super("dummy title", "dummy author",""); }

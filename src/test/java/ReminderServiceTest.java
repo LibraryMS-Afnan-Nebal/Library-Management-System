@@ -15,7 +15,7 @@ class ReminderServiceTest {
     private Loan loan1,loan2,loan3;
     private Book book1, book2,book3;
     private User user1 , user2;
-    private LoanManager mockLoanManager;
+    private Librarian mockLibrarian;
     @BeforeEach
     void setUp() {
         Book book1 = new Book("book1","auther1","1234567890");
@@ -25,11 +25,10 @@ class ReminderServiceTest {
         User user2 = new User(2,"user2","user2@gmail.com","pass2");
 
         loan1 = new Loan(book1,user1);  loan2 = new Loan(book2,user2);  loan3 = new Loan(book3,user1);
-        loan1.setIsOverdue(true); loan2.setIsOverdue(true); loan3.setIsOverdue(true);
 
-        mockLoanManager = mock(LoanManager.class);
+        mockLibrarian = mock(Librarian.class);
 
-        reminderService = new ReminderService(mockLoanManager);
+        reminderService = new ReminderService(mockLibrarian);
     }
 
     @AfterEach
@@ -41,7 +40,7 @@ class ReminderServiceTest {
         Observer mockObserver = mock(Observer.class);
         reminderService.addObserver(mockObserver);
 
-        when(mockLoanManager.detectOverdueBooks()).thenReturn(List.of(loan1, loan2, loan3));
+        when(mockLibrarian.detectOverdueBooks()).thenReturn(List.of(loan1, loan2, loan3));
 
         reminderService.sendReminders();
 

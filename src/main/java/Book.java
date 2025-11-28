@@ -8,8 +8,6 @@ public class Book {
     private final String author;
     private final String ISBN;
     private boolean isBorrowed;
-    private boolean isOverdue;
-
 
     /**
      * Creates a new Book with the given title, author, and ISBN part.
@@ -28,9 +26,7 @@ public class Book {
         this.author = validateAuthor(author);
         String isbn = "978"+isbnPart;
         this.ISBN = validateIsbn(isbn);
-
         this.isBorrowed = false;
-        this.isOverdue = false;
     }
 
     public Book(Book copyBook)
@@ -90,6 +86,5 @@ public class Book {
     public String getAuthor() {return author;}
     public String getISBN() {return ISBN;}
     public boolean getIsBorrowed() {return isBorrowed;}
-    public void setIsOverdue(boolean overdue) {this.isOverdue = overdue;}
     public void setIsBorrowed(boolean status) {this.isBorrowed = status;}
 }

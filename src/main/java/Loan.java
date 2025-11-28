@@ -28,11 +28,12 @@ public class Loan {
     public Book getBook() {return this.book;}
     public LocalDate getDueDate() {return this.dueDate;}
     public LocalDate getReturnDate() {return this.returnDate;}
-    public void setDueDate(LocalDate dueDate) {this.dueDate = dueDate;}
-    public void setReturned(boolean returned) {this.returned = returned;}
-    public void setReturnDate(LocalDate now) {this.returnDate = now; }
     public boolean getReturned() {return this.returned;}
     public int getLoanId() { return loanId; }
     public LocalDate getLastAccruedDate() { return lastAccruedDate; }
+    public void setDueDate(LocalDate dueDate) {this.dueDate = dueDate;}
+    public void setReturned(boolean returned) {this.returned = returned;}
+    public void setReturnDate(LocalDate now) {this.returnDate = now; }
     public void setLastAccruedDate(LocalDate lastAccruedDate) { this.lastAccruedDate = lastAccruedDate; }
+
 }

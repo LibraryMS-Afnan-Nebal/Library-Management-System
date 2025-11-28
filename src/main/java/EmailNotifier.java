@@ -20,9 +20,9 @@ public class EmailNotifier implements Observer {
         User user = um.getUser();
         String message = um.getMessage();
 
-        Dotenv dotenv = Dotenv.load();
-        String username = dotenv.get("username");
-        String password = dotenv.get("password");
+//        Dotenv dotenv = Dotenv.load();
+//        String username = dotenv.get("username");
+//        String password = dotenv.get("password");
 //        emailService = new EmailService(username,password);
         emailService.sendEmail(user.getEmail(), "Overdue Books Reminder",message);
     }
