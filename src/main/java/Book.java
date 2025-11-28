@@ -10,7 +10,6 @@ public class Book {
     private boolean isBorrowed;
 
     private boolean isOverdue;
-    private double fine;
 
     /**
      * Creates a new Book with the given title, author, and ISBN part.
@@ -32,7 +31,6 @@ public class Book {
 
         this.isBorrowed = false;
         this.isOverdue = false;
-        this.fine = 0.0;
     }
 
     public Book(Book copyBook)
@@ -93,7 +91,5 @@ public class Book {
     public String getISBN() {return ISBN;}
     public boolean getIsBorrowed() {return isBorrowed;}
     public void setIsOverdue(boolean overdue) {this.isOverdue = overdue;}
-    public double getFine() {return fine;}
     public void setIsBorrowed(boolean status) {this.isBorrowed = status;}
-    public void setFine(double fine) {this.fine = fine;}
 }

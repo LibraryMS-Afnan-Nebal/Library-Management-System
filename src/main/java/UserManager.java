@@ -54,7 +54,6 @@ public class UserManager{
         return id == null ? null : users.get(id);
     }
 
-    /////////////
     /**
      * Evaluates the user's total borrowing count and promotes their card type.
      * Regular -> Silver -> Gold depending on thresholds.

@@ -25,7 +25,7 @@ public class LoanManager {
             System.out.println("User cannot be null");
             return false;
         }
-/// /new
+
         if (user.getFineBalance() > 0) {
             System.out.println("Borrowing blocked: You have unpaid fines. Please pay them first.");
             return false;
@@ -42,17 +42,18 @@ public class LoanManager {
         }
 
         boolean found = false;
-        for (Book book : BookManager.listOfBooks) {
-            if (book.getTitle().equalsIgnoreCase(title) && book.getAuthor().equalsIgnoreCase(author)) {
+        for (Book book : BookManager.listOfBooks)
+        {
+            if (book.getTitle().equalsIgnoreCase(title) && book.getAuthor().equalsIgnoreCase(author))
+            {
                 found = true;
-                if (!book.getIsBorrowed()) {
+                if (!book.getIsBorrowed())
+                {
                     book.setIsBorrowed(true);
                     Loan loan = new Loan(book, user);
                     listOfLoans.add(loan);
                     user.setBorrowedBooks(book);
-                    ///////
                     user.incrementTotalBorrowedCount();
-                    //////
                     UserManager.getInstance().evaluateAndPromoteUser(user);
                     System.out.println("You successfully borrowed the book.\nReturn it by: " + loan.getDueDate());
                     return true;
@@ -64,7 +65,7 @@ public class LoanManager {
         } else System.out.println("Book with this title and author not found");
         return false;
     }
-/////////////changed things here
+
     public boolean returnBook(String title, String author, User user)
     {
         Book.validateTitle(title);
@@ -106,8 +107,6 @@ public class LoanManager {
 
         return false;
     }
-
-//new
 
     /**
      * Accrues fines for all overdue loans up to today.

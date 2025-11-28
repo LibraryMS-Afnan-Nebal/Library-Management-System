@@ -17,9 +17,7 @@ public class User {
     private boolean canBorrow;
     private List<Book> borrowedBooks;
     private boolean isLoggedIn;
-    /// ////////////
     private FineCalculator fineCalculator;
-    /// /////
     private int totalBorrowedCount = 0;
 
     public User() {
@@ -40,7 +38,6 @@ public class User {
         this.canBorrow = true;
         this.borrowedBooks = new ArrayList<>();
         this.isLoggedIn = false;
-        /////
         this.fineCalculator = new FineCalculator(new RegularFineStrategy());
 
     }
@@ -94,12 +91,10 @@ public class User {
         this.password = newPassword;
     }
 
-    /// /////////
     public FineCalculator getFineCalculator() {
         return fineCalculator;
     }
 
-    /// ////
     public int getTotalBorrowedCount() {
         return totalBorrowedCount;
     }
@@ -182,7 +177,6 @@ public class User {
         return false;
     }
 
-    /// //
     public void incrementTotalBorrowedCount() {
         totalBorrowedCount++;
     }
