@@ -54,6 +54,27 @@ public class UserManager{
         return id == null ? null : users.get(id);
     }
 
+    /**
+     * Evaluates the user's total borrowing count and promotes their card type.
+     * Regular -> Silver -> Gold depending on thresholds.
+     */
+    public void evaluateAndPromoteUser(User user) {
+        int count = user.getTotalBorrowedCount();
+
+        // access the user's FineCalculator
+        FineCalculator calculator = user.getFineCalculator();
+
+        if (count >= 15) {
+            calculator.setFineStrategy(new GoldFineStrategy());
+            System.out.println(user.getUsername() + " is now a GOLD member! ");
+        } else if (count >= 5) {
+            calculator.setFineStrategy(new SilverFineStrategy());
+            System.out.println(user.getUsername() + " is now a SILVER member!");
+        } else {
+            calculator.setFineStrategy(new RegularFineStrategy());
+        }
+    }
+
 /*
      /**
       * Attempts to borrow a book for the specified user while enforcing borrowing restrictions.

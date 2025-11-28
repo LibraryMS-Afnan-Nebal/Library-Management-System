@@ -1,3 +1,4 @@
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 /**
@@ -17,8 +18,11 @@ public class User {
     private boolean canBorrow;
     private List<Book> borrowedBooks;
     private boolean isLoggedIn;
+    private FineCalculator fineCalculator;
+    private int totalBorrowedCount = 0;
 
-    public User(){}
+    public User() {
+    }
 
     /**
      * Creates a new user with no fines and borrowing allowed.
@@ -37,18 +41,23 @@ public class User {
         this.canBorrow = true;
         this.borrowedBooks = new ArrayList<>();
         this.isLoggedIn = false;
+        this.fineCalculator = new FineCalculator(new RegularFineStrategy());
+
     }
 
 
     public boolean isLoggedIn() {
         return isLoggedIn;
     }
-    public void setCanBorrow(boolean canBorrow){
-        this.canBorrow=canBorrow;
+
+    public void setCanBorrow(boolean canBorrow) {
+        this.canBorrow = canBorrow;
     }
+
     public int getUserId() {
         return userId;
     }
+
     public String getUsername() {
         return username;
     }
@@ -58,17 +67,42 @@ public class User {
     public double getFineBalance() {
         return fineBalance;
     }
+
     public boolean canBorrow() {
         return canBorrow;
     }
-    public List<Book> getBorrowedBooks() { return borrowedBooks; }
+
+    public List<Book> getBorrowedBooks() {
+        return borrowedBooks;
+    }
+
     public void setBorrowedBooks(Book book) {
         this.borrowedBooks.add(book);
     }
-    public void setLoggedIn(boolean loggedIn) {this.isLoggedIn = loggedIn;}
-    public String getPassword() {return this.password;}
-    public void setUsername(String newUsername) {this.username = newUsername;}
-    public void setPassword(String newPassword) {this.password = newPassword;}
+
+    public void setLoggedIn(boolean loggedIn) {
+        this.isLoggedIn = loggedIn;
+    }
+
+    public String getPassword() {
+        return this.password;
+    }
+
+    public void setUsername(String newUsername) {
+        this.username = newUsername;
+    }
+
+    public void setPassword(String newPassword) {
+        this.password = newPassword;
+    }
+
+    public FineCalculator getFineCalculator() {
+        return fineCalculator;
+    }
+
+    public int getTotalBorrowedCount() {
+        return totalBorrowedCount;
+    }
 
     /**
      * Requests to change this user's username through the authentication system.
@@ -110,7 +144,7 @@ public class User {
      * Logs the user out of the system.
      */
     public boolean logout() {
-        return Authentication.logout(this.username, UserManager.getInstance().getUsers(),UserManager.getInstance().usernameToId());
+        return Authentication.logout(this.username, UserManager.getInstance().getUsers(), UserManager.getInstance().usernameToId());
     }
 
     /**
@@ -120,46 +154,61 @@ public class User {
      * @param username the desired username for the new user
      * @param password the desired password for the new user
      * @return true if the account was successfully created; false if the username
-     *         is already taken or the input is invalid
+     * is already taken or the input is invalid
      */
     public boolean signUp(String username, String password) {
         return Authentication.addAccount(username, password, UserManager.getInstance());
     }
 
+//new
 
-
-
-/*
     /**
-     * Adds a fine to the user.
-     *
-     * The fine amount must be positive. Adding a fine will also disable
-     * the user's ability to borrow books.
-     *
-     * @param amount the fine amount to add
-     * @return true if the fine was added successfully, false if the amount
-     *         was zero or negative
-     *//*
-    public boolean addFine(double amount) {
+     * Adds an arbitrary fine amount to the user's balance (used by accrual).
+     */
+    public boolean addFineAmount(double amount) {
         if (amount <= 0) return false;
         this.fineBalance += amount;
-        canBorrow = false;
+        if (this.fineBalance > 0) this.canBorrow = false;
         return true;
-    }*/
-/*
+    }
+
+    /// ////////
+    public boolean addFine(Loan loan) {
+        // let's say books always use 10 NIS/day
+        double fine = fineCalculator.calculateFine(loan, 10);
+        if (fine > 0) {
+            return addFineAmount(fine);
+        }
+        return false;
+    }
+
+    public void incrementTotalBorrowedCount() {
+        totalBorrowedCount++;
+    }
+
+
     /**
      * Pays part or all of the fine.
      * Borrowing is allowed only when balance is 0.
      *
      * @param amount amount to pay
      * @return true if payment is valid, false otherwise
-     *//*
+     */
     public boolean payFine(double amount) {
         if (amount <= 0 || amount > fineBalance) return false;
         fineBalance -= amount;
         if (fineBalance == 0) canBorrow = true;
         return true;
     }
-    */
 
+    public boolean hasOverdueBooks() {
+        for (Loan loan : LoanManager.getInstance().getLoanList()) {
+            if (loan.getUser().equals(this)) {
+                if (!loan.getReturned() && loan.getDueDate().isBefore(LocalDate.now())) {
+                    return true; // overdue
+                }
+            }
+        }
+        return false;
+    }
 }
