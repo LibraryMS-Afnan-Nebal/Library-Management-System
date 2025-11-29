@@ -7,7 +7,7 @@ import java.util.HashMap;
  * @version 1.0
  */
 
-public class UserManager{
+public class UserManager implements AccountManager<User>{
     private static UserManager instance = null;
     private HashMap<Integer, User> users = new HashMap<>();
     private final HashMap<String, Integer> usernameToId = new HashMap<>();
@@ -19,7 +19,72 @@ public class UserManager{
          if (instance == null) instance = new UserManager();
          return instance;
      }
+    @Override
+    public boolean signUp(String username, String password) {
+        throw new UnsupportedOperationException(
+                "Use signUp(username, password, email) for User accounts."
+        );
+    }
 
+    // New method with email
+    public boolean signUp(String username, String password, String email) {
+        if (username == null || username.isBlank() || password == null || password.isBlank() ||
+                email == null || email.isBlank()) return false;
+
+        String uname = username.toLowerCase();
+        if (usernameToId.containsKey(uname)) return false;
+
+        int id = nextUserId++;
+        User u = new User(id, username, email, password);
+        users.put(id, u);
+        usernameToId.put(uname, id);
+        return true;
+    }
+
+    @Override
+    public boolean login(String username, String password) {
+        Integer id = usernameToId.get(username.toLowerCase());
+        if (id == null) return false;
+        User u = users.get(id);
+        if (!u.getPassword().equals(password)) return false;
+        u.setLoggedIn(true);
+        return true;
+    }
+
+    @Override
+    public boolean logout(String username) {
+        Integer id = usernameToId.get(username.toLowerCase());
+        if (id == null) return false;
+        User u = users.get(id);
+        u.setLoggedIn(false);
+        return true;
+    }
+
+    @Override
+    public boolean changeUsername(String oldUsername, String newUsername) {
+        Integer id = usernameToId.get(oldUsername.toLowerCase());
+        if (id == null || usernameToId.containsKey(newUsername.toLowerCase())) return false;
+
+        User u = users.get(id);
+        if (!u.isLoggedIn()) return false;
+
+        usernameToId.remove(oldUsername.toLowerCase());
+        usernameToId.put(newUsername.toLowerCase(), id);
+        u.setUsername(newUsername);
+        return true;
+    }
+
+    @Override
+    public boolean changePassword(String username, String newPassword) {
+        Integer id = usernameToId.get(username.toLowerCase());
+        if (id == null) return false;
+
+        User u = users.get(id);
+        if (!u.isLoggedIn()) return false;
+
+        u.setPassword(newPassword);
+        return true;
+    }
 
     /**
      * @return all registered users (by ID)

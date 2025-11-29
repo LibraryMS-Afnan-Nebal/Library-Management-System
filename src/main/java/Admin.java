@@ -46,15 +46,15 @@ public class Admin {
     }
     public void setUsername(String newUsername) {this.username = newUsername;}
     public void setPassword(String newPassword) {this.password = newPassword;}
-
+/*
     /**
      * Requests to change this admin's username through the authentication system.
      * Ensures that the new username is unique and updates all related records
-     * in the manager’s mappings.
+     * in the MediaManager’s mappings.
      *
      * @param newUsername the new username to assign to this admin
      * @return true if the username was successfully changed; false otherwise
-     */
+     *//*
     public boolean changeUsername(String newUsername) {
        return Authentication.changeUsername(this.username, newUsername, AdminManager.getInstance().getAdmins(), AdminManager.getInstance().usernameToId());
     }
@@ -66,7 +66,7 @@ public class Admin {
      *
      * @param newPassword the new password to assign to this admin
      * @return true if the password was successfully changed; false otherwise
-     */
+     *//*
     public boolean changePassword(String newPassword) {
         return Authentication.changePassword(this.username, newPassword, AdminManager.getInstance().getAdmins(), AdminManager.getInstance().usernameToId());
     }
@@ -77,7 +77,7 @@ public class Admin {
      * @param username the entered username
      * @param password the entered password
      * @return true if login succeeds; false otherwise
-     */
+     *//*
     public boolean login(String username, String password) {
         return Authentication.login(username, password, AdminManager.getInstance().getAdmins(), AdminManager.getInstance().usernameToId());
     }
@@ -85,7 +85,7 @@ public class Admin {
     /**
      * Logs out the admin.
      * @return true if logout succeeds; false otherwise
-     */
+     *//*
     public boolean logout() {
         return Authentication.logout(this.username, AdminManager.getInstance().getAdmins(),AdminManager.getInstance().usernameToId());
     }

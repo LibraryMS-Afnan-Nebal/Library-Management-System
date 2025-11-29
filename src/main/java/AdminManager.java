@@ -8,7 +8,7 @@ import java.util.HashMap;
  * @version 1.0
  */
 
-public class AdminManager {
+public class AdminManager implements AccountManager<Admin>{
     private static AdminManager instance = null;
     private HashMap<Integer, Admin> admins = new HashMap<>();
     private final HashMap<String, Integer> usernameToId = new HashMap<>();
@@ -53,16 +53,75 @@ public class AdminManager {
     public HashMap<String, Integer> usernameToId() {
         return usernameToId;
     }
+    @Override
+    public boolean signUp(String username, String password) {
+        String uname = username.toLowerCase();
+        if (usernameToId.containsKey(uname)) return false;
 
+        int id = nextAdminId++;
+        Admin admin = new Admin(id, username, password);
+        admins.put(id, admin);
+        usernameToId.put(uname, id);
+        return true;
+    }
+
+    @Override
+    public boolean login(String username, String password) {
+        Integer id = usernameToId.get(username.toLowerCase());
+        if (id == null) return false;
+
+        Admin admin = admins.get(id);
+        if (!admin.getPassword().equals(password)) return false;
+
+        admin.setLoggedIn(true);
+        return true;
+    }
+
+    @Override
+    public boolean logout(String username) {
+        Integer id = usernameToId.get(username.toLowerCase());
+        if (id == null) return false;
+
+        Admin admin = admins.get(id);
+        admin.setLoggedIn(false);
+        return true;
+    }
+
+    @Override
+    public boolean changeUsername(String oldUsername, String newUsername) {
+        Integer id = usernameToId.get(oldUsername.toLowerCase());
+        if (id == null || usernameToId.containsKey(newUsername.toLowerCase())) return false;
+
+        Admin admin = admins.get(id);
+        if (!admin.isLoggedIn()) return false;
+
+        usernameToId.remove(oldUsername.toLowerCase());
+        usernameToId.put(newUsername.toLowerCase(), id);
+        admin.setUsername(newUsername);
+        return true;
+    }
+
+    @Override
+    public boolean changePassword(String username, String newPassword) {
+        Integer id = usernameToId.get(username.toLowerCase());
+        if (id == null) return false;
+
+        Admin admin = admins.get(id);
+        if (!admin.isLoggedIn()) return false;
+
+        admin.setPassword(newPassword);
+        return true;
+    }
+    /*
     /**
      * Adds a new admin manually to the system.
      *
      * @param username the admin's username (must be unique)
      * @param password the admin's password
      * @return true if the admin was added successfully; false if username already exists
-     */
+     *//*
     public boolean addAdmin( String username, String password) {
         return Authentication.addAccount(username, password, this);
-    }
+    }*/
 
 }

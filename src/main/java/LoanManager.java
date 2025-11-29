@@ -18,57 +18,7 @@ public class LoanManager {
 
     public List<Loan>getLoanList(){return this.listOfLoans;}
 
-    // this is replaced with borrowMedia
-    /*
-    public boolean borrowBook(String title, String author, User user) {
-        Book.validateTitle(title);
-        Book.validateAuthor(author);
-        if (user == null)
-        {
-            System.out.println("User cannot be null");
-            return false;
-        }
 
-        if (user.getFineBalance() > 0) {
-            System.out.println("Borrowing blocked: You have unpaid fines. Please pay them first.");
-            return false;
-        }
-
-        for (Loan loan : LoanManager.getInstance().getLoanList()) {
-            if (loan.getUser().equals(user) && !loan.getReturned()) {
-                LocalDate due = loan.getDueDate();
-                if (due.isBefore(LocalDate.now())) {
-                    System.out.println("Borrowing blocked: You have overdue books. Return them first.");
-                    return false;
-                }
-            }
-        }
-
-        boolean found = false;
-        for (Book book : BookManager.listOfBooks)
-        {
-            if (book.getTitle().equalsIgnoreCase(title) && book.getAuthor().equalsIgnoreCase(author))
-            {
-                found = true;
-                if (!book.getIsBorrowed())
-                {
-                    book.setIsBorrowed(true);
-                    Loan loan = new Loan(book, user);
-                    listOfLoans.add(loan);
-                    user.setBorrowedBooks(book);
-                    user.incrementTotalBorrowedCount();
-                    UserManager.getInstance().evaluateAndPromoteUser(user);
-                    System.out.println("You successfully borrowed the book.\nReturn it by: " + loan.getDueDate());
-                    return true;
-                }
-            }
-        }
-        if (found)
-            System.out.println("Sorry, all copies of this book are currently borrowed");
-        else
-            System.out.println("Book with this title and author not found");
-        return false;
-    }*/
 
     public boolean borrow(Media media, User user) {
 
@@ -100,7 +50,9 @@ public class LoanManager {
         media.setIsBorrowed(true);
         Loan loan = new Loan(media, user);
         listOfLoans.add(loan);
-
+        //added the missing part
+        user.incrementTotalBorrowedCount();
+        UserManager.getInstance().evaluateAndPromoteUser(user);
         user.addBorrowedMedia(media);
 
         System.out.println("Borrowed successfully. Return by: " + loan.getDueDate());
@@ -197,4 +149,36 @@ public class LoanManager {
 
         System.out.println("Accrued for return: " + finalFine + " NIS for user " + user.getUsername());
     }
+
+    public String generateOverdueReport(User user) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("===== Overdue Items =====\n");
+
+        double totalFine = 0;
+
+        for (Loan loan : listOfLoans) {
+            if (loan.getUser().equals(user) && !loan.getReturned()) {
+                if (loan.getDueDate().isBefore(LocalDate.now())) {
+
+                    Media m = loan.getMedia();
+
+                    long overdueDays = ChronoUnit.DAYS.between(loan.getDueDate(), LocalDate.now());
+                    double fine = overdueDays * m.getDailyFineRate();
+
+                    sb.append(String.format(
+                            "%s | overdue %d days | fine: %.2f NIS\n",
+                            m.getTitle(), overdueDays, fine
+                    ));
+
+                    totalFine += fine;
+                }
+            }
+        }
+
+        sb.append("-------------------------\n");
+        sb.append(String.format("Total outstanding fines: %.2f NIS\n", totalFine));
+
+        return sb.toString();
+    }
+
 }

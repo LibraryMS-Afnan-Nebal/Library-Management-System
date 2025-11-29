@@ -10,7 +10,7 @@ class UserTest {
     private UserManager manager;
 /*
     private User user;
-    private UserManager manager;
+    private UserManager MediaManager;
     private User user2;
 */
     @BeforeEach
@@ -23,12 +23,12 @@ class UserTest {
         manager.getUsers().put(user.getUserId(), user);
         manager.usernameToId().put("username", user.getUserId());
 /*
-        manager = UserManager.getInstance();
-        manager.getUsersUsernames().clear();
+        MediaManager = UserManager.getInstance();
+        MediaManager.getUsersUsernames().clear();
         user = new User(1, "username", "password");
-        manager.addUser(user);
+        MediaManager.addUser(user);
         user2 = new User(2, "username2", "password2");
-        manager.addUser(user2);
+        MediaManager.addUser(user2);
 
  */
     }

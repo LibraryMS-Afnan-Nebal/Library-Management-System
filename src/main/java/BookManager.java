@@ -1,19 +1,24 @@
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
-public class BookManager   {
+public class BookManager implements MediaManager {
     static List<Book> listOfBooks = new ArrayList<>();
     public static List<Book> getListOfBooks() {return listOfBooks;}
 
+    //this should be updated
     /**
      * Adds a book to the library with a unique ISBN
      *
-     * @param book the book to add to the library
+     * @param media the book to add to the library
      * @since 0.0.1
      */
-    public void addBook(Book book , int copies)
+    @Override
+    public void add(Media media, int copies)
     {
+        //new
+        if (!(media instanceof Book))
+            throw new IllegalArgumentException("Only Book objects allowed");
+        Book book = (Book) media;
+
         for(Book b: listOfBooks)
         {
             if(b.getISBN().equals(book.getISBN()))
@@ -33,6 +38,27 @@ public class BookManager   {
         else listOfBooks.add(book);
     }
 
+
+    ////new
+    @Override
+    public Book findAvailableByTitle(String title) {
+        for (Book b : listOfBooks) {
+            if (b.getTitle().equalsIgnoreCase(title) && !b.getIsBorrowed()) {
+                return b;
+            }
+        }
+        return null;
+    }
+    @Override
+    public List<Book> findAllByTitle(String title) {
+        List<Book> result = new ArrayList<>();
+        for (Book b : listOfBooks) {
+            if (b.getTitle().equalsIgnoreCase(title)) {
+                result.add(b);
+            }
+        }
+        return result;
+    }
     /**
      * Searches the list of books based on the specified field (title, author, or ISBN)
      * and the given search keyword

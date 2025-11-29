@@ -6,7 +6,7 @@ public class CD extends Media {
         super(title);
         this.cdId = nextId++;
     }
-
+//copy const
     public CD(CD copy) {
         super(copy.getTitle());
         this.cdId = nextId++;

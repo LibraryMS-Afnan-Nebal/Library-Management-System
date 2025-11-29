@@ -1,7 +1,5 @@
 import org.junit.jupiter.api.*;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,7 +15,7 @@ class BookManagerTest {
         BookManager.listOfBooks.clear();
         BM = new BookManager();
         book1 = new Book("Ghorbat Al-Yasmeen","Khawla Hamdi","1234567890");
-        BM.addBook(book1,1);
+        BM.add(book1,1);
     }
 
     @AfterEach
@@ -39,7 +37,7 @@ class BookManagerTest {
                 () ->
                 {
                     Book book2 = new Book ("title","Ibrahim bin Omar Al-Sakran","1234567890");
-                    BM.addBook(book2,1);
+                    BM.add(book2,1);
                 }
         );
         assertEquals("The ISBN should be uniqe", exception.getMessage());
@@ -51,7 +49,7 @@ class BookManagerTest {
     {
         Book book2 = new Book ("Raqa’iq Al-Qur’an","Ibrahim bin Omar Al-Sakran","1234567891");
 
-        BM.addBook(book2,1);
+        BM.add(book2,1);
 
         assertEquals(2, BM.getListOfBooks().size());
     }
@@ -62,7 +60,7 @@ class BookManagerTest {
         int copiesToAdd = 5;
 
         int initialSize = BM.getListOfBooks().size();
-        BM.addBook(book2, copiesToAdd);
+        BM.add(book2, copiesToAdd);
 
         assertEquals(initialSize + copiesToAdd, BM.getListOfBooks().size());
 
@@ -111,7 +109,7 @@ class BookManagerTest {
         Book book2 = new Book ("Ghorbat Al-Yasmeen","author1","1234567891");
         Book book3 = new Book ("Ghorbat Al-Yasmeen","author2","1234567892");
         book3.setIsBorrowed(true);
-        BM.addBook(book2,2);   BM.addBook(book3,1);
+        BM.add(book2,2);   BM.add(book3,1);
         List<Book> allGhorbatAlYasmeen =  BM.findBooksByField("title","Ghorbat Al-Yasmeen");
 
        List<Book>available = BM.filterAvailableBooksForUser(allGhorbatAlYasmeen);
@@ -126,7 +124,7 @@ class BookManagerTest {
         Book book2 = new Book ("Ghorbat Al-Yasmeen","author1","1234567891");
         Book book3 = new Book ("Ghorbat Al-Yasmeen","author2","1234567892");
         book3.setIsBorrowed(true);
-        BM.addBook(book2,2);   BM.addBook(book3,1);
+        BM.add(book2,2);   BM.add(book3,1);
         List<Book> allGhorbatAlYasmeen =  BM.findBooksByField("title","Ghorbat Al-Yasmeen");
 
         List<BookStats>stats = BM.summarizeBooksForAdmin(allGhorbatAlYasmeen);

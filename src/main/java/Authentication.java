@@ -18,6 +18,30 @@ public class Authentication {
         return instance;
     }
 
+    public <T> boolean signUp(String username, String password, AccountManager<T> manager) {
+        return manager.signUp(username, password);
+    }
+    public boolean signUpUser(String username, String password, String email, UserManager userManager) {
+        return userManager.signUp(username, password, email);
+    }
+
+    public <T> boolean login(String username, String password, AccountManager<T> manager) {
+        return manager.login(username, password);
+    }
+
+    public <T> boolean logout(String username, AccountManager<T> manager) {
+        return manager.logout(username);
+    }
+
+    public <T> boolean changeUsername(String oldUsername, String newUsername, AccountManager<T> manager) {
+        return manager.changeUsername(oldUsername, newUsername);
+    }
+
+    public <T> boolean changePassword(String username, String newPassword, AccountManager<T> manager) {
+        return manager.changePassword(username, newPassword);
+    }
+}
+/*
     public static boolean addAccount(String username, String password, Object manager) {
         if (username == null || username.isBlank() || password == null || password.isBlank())
             return false;
@@ -54,7 +78,7 @@ public class Authentication {
      * @param password the password
      * @param accounts the map of registered accounts
      * @return true if login succeeds; false otherwise
-     */
+     *//*
     public static <T> boolean login(String username, String password, HashMap<Integer, T> accounts, HashMap<String, Integer> usernameToId) {
         if (username == null || username.isBlank() || password == null || password.isBlank()) {
             System.out.println("Username or password cannot be empty.");
@@ -100,7 +124,7 @@ public class Authentication {
      * @param accounts the map of accounts (key = id)
      * @return true if logout succeeds; false otherwise
      */
-
+/*
     public static <T> boolean logout(String username, HashMap<Integer, T> accounts, HashMap<String, Integer> usernameToId) {
         if (username == null || username.isBlank()) {
             System.out.println("Logout Failed");
@@ -217,4 +241,4 @@ public class Authentication {
         System.out.println("Unknown account type.");
         return false;
     }
-}
+    */

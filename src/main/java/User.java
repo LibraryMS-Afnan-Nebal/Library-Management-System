@@ -37,7 +37,7 @@ public class User {
         this.userId = userId;
         this.username = username;
         this.password = password;
-        this.email = email;
+        setEmail(email);
         this.fineBalance = 0;
         this.canBorrow = true;
         this.borrowedMedia = new ArrayList<>();
@@ -72,6 +72,14 @@ public class User {
     public boolean canBorrow() {
         return canBorrow;
     }
+//neww
+public void setEmail(String email) {
+    if (email == null || !email.contains("@") || !email.contains(".")) {
+        throw new IllegalArgumentException("Invalid email format.");
+    }
+    this.email = email;
+}
+
 
     //new
     public List<Media> getBorrowedMedia() {
@@ -107,15 +115,15 @@ public class User {
     public int getTotalBorrowedCount() {
         return totalBorrowedCount;
     }
-
+/*
     /**
      * Requests to change this user's username through the authentication system.
      * Ensures that the new username is unique and updates all related records
-     * in the manager’s mappings.
+     * in the MediaManager’s mappings.
      *
      * @param newUsername the new username to assign to this user
      * @return true if the username was successfully changed; false otherwise
-     */
+     *//*
     public boolean changeUsername(String newUsername) {
         return Authentication.changeUsername(this.username, newUsername, UserManager.getInstance().getUsers(), UserManager.getInstance().usernameToId());
     }
@@ -127,7 +135,7 @@ public class User {
      *
      * @param newPassword the new password to assign to this admin
      * @return true if the password was successfully changed; false otherwise
-     */
+     *//*
     public boolean changePassword(String newPassword) {
         return Authentication.changePassword(this.username, newPassword, UserManager.getInstance().getUsers(), UserManager.getInstance().usernameToId());
 
@@ -139,14 +147,14 @@ public class User {
      * @param username the user's username for authentication
      * @param password the user's password for authentication
      * @return true if login is successful, false otherwise
-     */
+     *//*
     public boolean login(String username, String password) {
         return Authentication.login(username, password, UserManager.getInstance().getUsers(), UserManager.getInstance().usernameToId());
     }
 
     /**
      * Logs the user out of the system.
-     */
+     *//*
     public boolean logout() {
         return Authentication.logout(this.username, UserManager.getInstance().getUsers(), UserManager.getInstance().usernameToId());
     }
@@ -159,11 +167,11 @@ public class User {
      * @param password the desired password for the new user
      * @return true if the account was successfully created; false if the username
      * is already taken or the input is invalid
-     */
+     *//*
     public boolean signUp(String username, String password) {
         return Authentication.addAccount(username, password, UserManager.getInstance());
     }
-
+*/
 //new
 
     /**
@@ -176,16 +184,16 @@ public class User {
         return true;
     }
 
-    /// ////////
+    /// ////////cancelled
+    /*
     public boolean addFine(Loan loan) {
-        // let's say books always use 10 NIS/day
         double fine = fineCalculator.calculateFine(loan, 10);
         if (fine > 0) {
             return addFineAmount(fine);
         }
         return false;
     }
-
+*/
     public void incrementTotalBorrowedCount() {
         totalBorrowedCount++;
     }

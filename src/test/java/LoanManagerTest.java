@@ -17,7 +17,7 @@ public class LoanManagerTest {
         Book book1 = new Book("java","author1","1234567890");
         Book book2 = new Book("java","author2","1234567891");
         Book book3 = new Book("java","author3","1234567892");
-        BM.addBook(book1,1); BM.addBook(book2,1); BM.addBook(book3,1);
+        BM.add(book1,1); BM.add(book2,1); BM.add(book3,1);
     }
     @AfterEach
     void tearDown() {
