@@ -14,7 +14,7 @@ public class AdminManager implements AccountManager<Admin>{
     private final HashMap<String, Integer> usernameToId = new HashMap<>();
     private int nextAdminId = 1;
 
-    public AdminManager() {}
+    private AdminManager() {}
 
     /** @return the single instance of AdminManager */
    public static AdminManager getInstance() {
@@ -69,10 +69,8 @@ public class AdminManager implements AccountManager<Admin>{
     public boolean login(String username, String password) {
         Integer id = usernameToId.get(username.toLowerCase());
         if (id == null) return false;
-
         Admin admin = admins.get(id);
         if (!admin.getPassword().equals(password)) return false;
-
         admin.setLoggedIn(true);
         return true;
     }
@@ -81,7 +79,6 @@ public class AdminManager implements AccountManager<Admin>{
     public boolean logout(String username) {
         Integer id = usernameToId.get(username.toLowerCase());
         if (id == null) return false;
-
         Admin admin = admins.get(id);
         admin.setLoggedIn(false);
         return true;

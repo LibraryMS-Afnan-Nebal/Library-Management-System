@@ -32,10 +32,8 @@ public class LibrarianManager implements AccountManager<Librarian> {
     public boolean login(String username, String password) {
         Integer id = usernameToId.get(username.toLowerCase());
         if (id == null) return false;
-
         Librarian librarian = librarians.get(id);
         if (!librarian.getPassword().equals(password)) return false;
-
         librarian.setLoggedIn(true);
         return true;
     }
@@ -44,7 +42,6 @@ public class LibrarianManager implements AccountManager<Librarian> {
     public boolean logout(String username) {
         Integer id = usernameToId.get(username.toLowerCase());
         if (id == null) return false;
-
         Librarian librarian = librarians.get(id);
         librarian.setLoggedIn(false);
         return true;

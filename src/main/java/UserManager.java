@@ -13,7 +13,7 @@ public class UserManager implements AccountManager<User>{
     private final HashMap<String, Integer> usernameToId = new HashMap<>();
     private int nextUserId = 1;
 
-    public UserManager() {}
+    private UserManager() {}
 
      public static UserManager getInstance() {
          if (instance == null) instance = new UserManager();
