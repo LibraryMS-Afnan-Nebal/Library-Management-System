@@ -1,4 +1,109 @@
-import java.util.Scanner;
+public class Main {
+    public static void main(String[] args) {
+        AdminManager adminManager = AdminManager.getInstance();
+        LibrarianManager librarianManager = LibrarianManager.getInstance();
+        UserManager userManager = UserManager.getInstance();
+
+        System.out.println("=== SIGNING UP USERS ===");
+        adminManager.signUp("AdminOne", "pass123", "admin1@test.com");
+        adminManager.signUp("AdminTwo", "pass456", "admin2@test.com");
+        librarianManager.signUp("LibOne", "lib123", "lib1@test.com");
+        librarianManager.signUp("LibTwo", "lib456", "lib2@test.com");
+        userManager.signUp("UserOne", "user123", "user1@test.com");
+        userManager.signUp("UserTwo", "user456", "user2@test.com");
+        userManager.signUp("UserThree", "user789", "user3@test.com");
+
+        System.out.println("\n=== LOGGING IN USERS ===");
+        System.out.println("AdminOne login: " + adminManager.login("AdminOne", "pass123"));
+        System.out.println("LibTwo login: " + librarianManager.login("LibTwo", "lib456"));
+        System.out.println("UserThree login: " + userManager.login("UserThree", "user789"));
+        System.out.println("Wrong password login: " + userManager.login("UserTwo", "wrongpass"));
+
+        System.out.println("\n=== CHANGING USERNAMES/PASSWORDS ===");
+        System.out.println("Change UserThree username to 'UserX': " + userManager.changeUsername("UserThree", "UserX"));
+        System.out.println("Change UserThree password to 'newpass': " + userManager.changePassword("UserX", "newpass"));
+
+        System.out.println("\n=== LOGGING OUT USERS ===");
+        System.out.println("AdminOne logout: " + adminManager.logout("AdminOne"));
+        System.out.println("UserX logout: " + userManager.logout("UserX"));
+
+        System.out.println("\n=== VERIFY DATA IN SYSTEM ===");
+        System.out.println("Admins:");
+        adminManager.accounts.values().forEach(a -> System.out.println(
+                a.getUsername() + " | loggedIn=" + a.isLoggedIn()
+        ));
+
+        System.out.println("Librarians:");
+        librarianManager.accounts.values().forEach(l -> System.out.println(
+                l.getUsername() + " | loggedIn=" + l.isLoggedIn()
+        ));
+
+        System.out.println("Users:");
+        userManager.accounts.values().forEach(u -> System.out.println(
+                u.getUsername() + " | loggedIn=" + u.isLoggedIn()
+        ));
+
+        System.out.println("\n=== TEST FINES AND BORROWING ===");
+        User user1 = userManager.accounts.values().iterator().next(); // get first user
+        System.out.println("Initial canBorrow: " + user1.canBorrow());
+        user1.addFineAmount(50);
+        System.out.println("After adding fine, canBorrow: " + user1.canBorrow() + ", fineBalance=" + user1.getFineBalance());
+        user1.payFine(50);
+        System.out.println("After paying fine, canBorrow: " + user1.canBorrow() + ", fineBalance=" + user1.getFineBalance());
+    }
+}
+
+
+/*public class Main {
+    public static void main(String[] args) {
+
+        UserManager userManager = UserManager.getInstance();
+        AdminManager adminManager = AdminManager.getInstance();
+        LibrarianManager librarianManager = LibrarianManager.getInstance();
+
+        System.out.println("=== SIGN UP ===");
+        System.out.println("User sign up: " +
+                userManager.signUp("nebal", "1234", "nebal@gmail.com"));
+        System.out.println("Admin sign up: " +
+                adminManager.signUp("admin", "adminpass", "admin@gmail.com"));
+        System.out.println("Librarian sign up: " +
+                librarianManager.signUp("lib", "libpass", "lib@gmail.com"));
+
+        System.out.println("\n=== LOGIN ===");
+        System.out.println("User login: " +
+                userManager.login("nebal", "1234"));
+        System.out.println("Admin login: " +
+                adminManager.login("admin", "adminpass"));
+        System.out.println("Librarian login: " +
+                librarianManager.login("lib", "libpass"));
+
+        System.out.println("\n=== CHANGE USERNAME ===");
+        System.out.println("Change username (must be logged in): " +
+                userManager.changeUsername("nebal", "nebz"));
+
+        System.out.println("Login with new username: " +
+                userManager.login("nebz", "1234"));
+
+        System.out.println("\n=== CHANGE PASSWORD ===");
+        System.out.println("Change password: " +
+                userManager.changePassword("nebz", "9999"));
+
+        System.out.println("Login with new password: " +
+                userManager.login("nebz", "9999"));
+
+        System.out.println("\n=== LOGOUT ===");
+        System.out.println("User logout: " +
+                userManager.logout("nebz"));
+        System.out.println("Admin logout: " +
+                adminManager.logout("admin"));
+        System.out.println("Librarian logout: " +
+                librarianManager.logout("lib"));
+
+        System.out.println("\n=== DONE ===");
+    }
+}
+*/
+/*import java.util.Scanner;
 
 public class Main {
 
@@ -254,3 +359,4 @@ Authentication auth = Authentication.getInstance();
 
 
     }
+*/
