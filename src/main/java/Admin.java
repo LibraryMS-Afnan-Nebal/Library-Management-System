@@ -2,37 +2,44 @@ import java.util.ArrayList;
 
 /**
  * Represents an administrator in the Library Management System.
- * Each admin has an ID, username, password, and login status.
- * Provides methods to log in and log out.
+ * <p>
+ * Each admin has an ID, username, password, email, and login status.
+ * Admins can perform privileged operations such as unregistering users.
+ * </p>
+ *
+ * <p>Note: Admin operations require the admin to be logged in.</p>
  *
  * @author Nebal
  * @version 1.0
  */
 public class Admin extends Role{
-    private int adminId;
-    private String username;
-    private String password;
-    private boolean isLoggedIn;
-    private String email;
-
+    /**
+     * Constructs a new Admin with the specified ID, username, password, and email.
+     *
+     * @param id the unique ID of the admin
+     * @param username the username of the admin
+     * @param password the password of the admin
+     * @param email the email of the admin
+     */
     public Admin(int id, String username, String password, String email) {
         super(id, username, password, email);
     }
 
-    //make sure to update this
-    /*
     /**
-     * Allows an admin to unregister a user.
+     * Unregisters a user from the system.
+     * <p>
      * The admin must be logged in to perform this action.
+     * This method delegates the operation to {@link UserManager}.
+     * </p>
      *
      * @param userId the ID of the user to unregister
-     * @return true if the user was removed, false otherwise
-     *//*
+     * @return true if the user was successfully removed, false otherwise
+     */
     public boolean unregisterUser(int userId) {
         if (!this.isLoggedIn()) return false;
 
         return UserManager.getInstance().unregisterUser(userId);
-    }*/
+    }
 }
 
 
