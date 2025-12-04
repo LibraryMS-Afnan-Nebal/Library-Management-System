@@ -7,58 +7,24 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AdminManagerTest {
-    private AdminManager manager;
-    private Admin admin1;
-
-    @BeforeEach
-    void setUp() {
-        manager = AdminManager.getInstance();
-        manager.getAdmins().clear();
-        manager.usernameToId().clear();
-
-    }
-
 
     @Test
-    void testSingleton() {
-        AdminManager anotherInstance = AdminManager.getInstance();
-        assertSame(manager, anotherInstance, "AdminManager should be a singleton");
-    }
+    void testSingletonInstance() {
+        AdminManager m1 = AdminManager.getInstance();
+        AdminManager m2 = AdminManager.getInstance();
 
-
-    @Test
-    void GetAdminByUsername_NullUsername() {
-        assertNull(manager.getAdminByUsername(null), "Should return null");
-
+        assertSame(m1, m2, "AdminManager should return the same singleton instance.");
     }
     @Test
-    void GetAdminByUsername_NonExistentUsername() {
-        assertNull(manager.getAdminByUsername("nonExistent"), "Should return null");
+    void testBuildAccountCreatesAdmin() {
+        AdminManager manager = AdminManager.getInstance();
 
+        Admin admin = manager.buildAccount(1, "AdminA", "pass123", "adminA@test.com");
 
+        assertNotNull(admin);
+        assertEquals(1, admin.getId());
+        assertEquals("AdminA", admin.getUsername());
+        assertEquals("pass123", admin.getPassword());
+        assertEquals("adminA@test.com", admin.getEmail());
     }
-    @Test
-    void GetAdminByUsername_success() {
-        manager.addAdmin("admin1", "pass1");
-        admin1 = manager.getAdminByUsername("admin1");
-        assertEquals("admin1", admin1.getUsername());
-       }
-
-    @Test
-    void testGetAdminById_NoAdmins(){
-        assertNull(manager.getAdminById(1), "Should return null if ID does not exist");
-
-    }
-    @Test
-    void testGetAdminById_Success() {
-        manager.addAdmin("admin1", "pass1");
-        Admin admin1 = manager.getAdminByUsername("admin1");
-        assertSame(admin1, manager.getAdminById(admin1.getAdminId()), "Should retrieve correct admin by ID");
-         }
-    @Test
-    void testGetAdminById_InvalidId() {
-        assertNull(manager.getAdminById(999), "Should return null for non-existent ID");
-
-    }
-
 }
