@@ -25,64 +25,68 @@ public class BookManager extends MediaManager<Book> {
     {
         if (item == null) return false;
         String isbn = item.getISBN();
-        if (isbn == null) return false;
         return super.listOfItems.stream().anyMatch(b -> isbn.equals(b.getISBN()));
     }
 
-    public void displaySearchByTitle(String title, Object person) {
+    public String displaySearchByTitle(String title, Object person) {
         List<Book> found = searchByTitle(title);
-
-        displaySearchResults(found, person);
+        return getSearchResultsString(found, person);
     }
 
-    public void displaySearchByAuthor(String author, Object person) {
+    public String displaySearchByAuthor(String author, Object person) {
         List<Book> found = searchByAuthor(author);
-
-        displaySearchResults(found, person);
+        return getSearchResultsString(found, person);
     }
 
-    public void displaySearchByISBN(String isbn, Object person) {
+    public String displaySearchByISBN(String isbn, Object person) {
         List<Book> found = listOfItems.stream()
                 .filter(b -> b.getISBN().equals(isbn))
                 .toList();
-
-        displaySearchResults(found, person);
+        return getSearchResultsString(found, person);
     }
 
-    private void displaySearchResults(List<Book> found, Object person) {
+    private String getSearchResultsString(List<Book> found, Object person) {
+        StringBuilder sb = new StringBuilder();
+
         if (found.isEmpty()) {
-            System.out.println("This book not found");
-            return;
+            sb.append("This book not found\n");
+            return sb.toString();
         }
 
         if (!hasAvailableCopies(found)) {
-            System.out.println("All copies was Borrowed");
-            return;
+            sb.append("All copies was Borrowed\n");
+            return sb.toString();
         }
 
         Map<String, List<Book>> grouped = groupByTitleAuthor(found);
 
         if (person instanceof User) {
-            System.out.printf("%-15s %-25s %-20s %-10s\n", "ISBN", "Title", "Author", "Status");
+            sb.append(String.format("%-15s %-25s %-20s %-10s%n", "ISBN", "Title", "Author", "Status"));
             for (List<Book> group : grouped.values()) {
                 Book b = group.stream().filter(x -> !x.getIsBorrowed()).findFirst().get();
-                System.out.printf("%-15s %-25s %-20s %-10s\n",
-                        b.getISBN(), b.getTitle(), b.getAuthor(), "Available");
+                sb.append(String.format("%-15s %-25s %-20s %-10s%n",
+                        b.getISBN(), b.getTitle(), b.getAuthor(), "Available"));
             }
         } else if (person instanceof Admin) {
-            System.out.printf("%-15s %-25s %-20s %-10s %-10s %-10s\n",
-                    "ISBN", "Title", "Author", "Total", "Borrowed", "Available");
+            sb.append(String.format("%-15s %-25s %-20s %-10s %-10s %-10s%n",
+                    "ISBN", "Title", "Author", "Total", "Borrowed", "Available"));
 
             for (List<Book> group : grouped.values()) {
                 Book b = group.get(0);
                 long total = group.size();
                 long borrowed = group.stream().filter(Book::getIsBorrowed).count();
                 long available = total - borrowed;
-                System.out.printf("%-15s %-25s %-20s %-10d %-10d %-10d\n",
-                        b.getISBN(), b.getTitle(), b.getAuthor(), total, borrowed, available);
+                sb.append(String.format("%-15s %-25s %-20s %-10d %-10d %-10d%n",
+                        b.getISBN(), b.getTitle(), b.getAuthor(), total, borrowed, available));
             }
+        }else
+        {
+            throw new IllegalArgumentException("Person must be either a User or an Admin");
         }
+
+        return sb.toString();
     }
+
 
 //    /**
 //     * Searches the list of books based on the specified field (title, author, or ISBN)

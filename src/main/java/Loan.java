@@ -9,7 +9,7 @@ public class Loan {
     private LocalDate dueDate;
     private LocalDate returnDate;
     private boolean returned;
-    private LocalDate lastAccruedDate;//track last date fines were accrued (init to dueDate)
+    private LocalDate lastAccruedDate;
 
 
     public Loan(Media media,User user)
@@ -34,7 +34,6 @@ public class Loan {
     public void setReturned(boolean returned) {this.returned = returned;}
     public void setReturnDate(LocalDate now) {this.returnDate = now; }
     public boolean getReturned() {return this.returned;}
-    public int getLoanId() { return loanId; }
     public LocalDate getLastAccruedDate() { return lastAccruedDate; }
     public void setLastAccruedDate(LocalDate lastAccruedDate) { this.lastAccruedDate = lastAccruedDate; }
 

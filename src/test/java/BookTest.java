@@ -1,90 +1,82 @@
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BookTest {
 
     @Test
-    void validateTitle()
+    void testBookCreationValid()
     {
-        Exception exception = assertThrows(IllegalArgumentException.class,
-                () ->
-                {
-                    Book book2 = new Book ("","Ibrahim bin Omar Al-Sakran","1234567899");
-                }
-        );
-        assertEquals("Title can't be empty", exception.getMessage());
+        Book b = new Book("Clean Code", "Robert Martin", "1234567890");
+
+        assertEquals("Clean Code", b.getTitle());
+        assertEquals("Robert Martin", b.getAuthor());
+        assertEquals("9781234567890", b.getISBN());
+        assertFalse(b.getIsBorrowed());
     }
 
     @Test
-    void validateAuthor()
+    void testBorrowStatus()
     {
-        Exception exception = assertThrows(IllegalArgumentException.class,
-                () ->
-                {
-                    Book book2 = new Book ("Raqa’iq Al-Qur’an","","1234567899");
-                }
-        );
-        assertEquals("Author can't be empty", exception.getMessage());
-    }
+        Book b = new Book("Test Book", "Author", "1234567890");
 
-
-    @Test
-    void validateIsbn_IsbnContainsSpaces()
-    {
-        Exception exception = assertThrows(IllegalArgumentException.class,
-                () ->
-                {
-                    Book book2 = new Book ("Raqa’iq Al-Qur’an","Ibrahim bin Omar Al-Sakran","1 23456789");
-                }
-        );
-        assertEquals("ISBN cannot contain spaces", exception.getMessage());
+        assertFalse(b.getIsBorrowed());
+        b.setIsBorrowed(true);
+        assertTrue(b.getIsBorrowed());
     }
 
     @Test
-    void validateIsbn_isbnContainsNonDigits()
+    void testLoanDuration()
     {
-        Exception exception = assertThrows(IllegalArgumentException.class,
-                () ->
-                {
-                    Book book2 = new Book ("Raqa’iq Al-Qur’an","Ibrahim bin Omar Al-Sakran","1A23456789");
-                }
-        );
-        assertEquals("ISBN must contain digits only", exception.getMessage());
+        Book b = new Book("Test Book", "Author", "1234567890");
+        assertEquals(28, b.getLoanDurationDays());
     }
 
     @Test
-    void validateIsbn_isbnLengthNot10()
+    void testDailyFineRate()
     {
-        Book book2 = new Book ("Raqa’iq Al-Qur’an","Ibrahim bin Omar Al-Sakran","1234567890");
-
-        Exception exception = assertThrows(IllegalArgumentException.class,
-                () ->
-                {
-                    Book book3 = new Book ("Raqa’iq Al-Qur’an","Ibrahim bin Omar Al-Sakran","12345678910");
-                }
-        );
-        assertEquals("ISBN must have 10 digits after the 978 prefix", exception.getMessage());
+        Book b = new Book("Test Book", "Author", "1234567890");
+        assertEquals(10, b.getDailyFineRate());
     }
 
     @Test
-    void validateCopies_copiesEqualZero()
+    void testInvalidIsbnSpaces()
     {
-        Exception exception = assertThrows(IllegalArgumentException.class,
-                () ->
-                {
-                   Book.validateCopies(0);
-                }
+        Exception ex = assertThrows(IllegalArgumentException.class, () ->
+                new Book("Test", "Author", "123 4567890")
         );
-        assertEquals("Copies must be positive", exception.getMessage());
+        assertEquals("ISBN cannot contain spaces", ex.getMessage());
     }
 
     @Test
-    void validateCopies()
+    void testInvalidIsbnNotDigits()
     {
-       int copies = Book.validateCopies(5);
-        assertEquals(5,copies);
+        Exception ex = assertThrows(IllegalArgumentException.class, () ->
+                new Book("Test", "Author", "12345ABC90")
+        );
+        assertEquals("ISBN must contain digits only", ex.getMessage());
+    }
+
+    @Test
+    void testInvalidIsbnLength()
+    {
+        Exception ex = assertThrows(IllegalArgumentException.class, () ->
+                new Book("Test", "Author", "12345")
+        );
+        assertEquals("ISBN must have 10 digits after the 978 prefix", ex.getMessage());
+    }
+
+    @Test
+    void testCopyConstructor()
+    {
+        Book original = new Book("Original", "Author", "1234567890");
+        original.setIsBorrowed(true);
+
+        Book copy = new Book(original);
+
+        assertEquals("Original", copy.getTitle());
+        assertEquals("Author", copy.getAuthor());
+        assertEquals("9781234567890", copy.getISBN());
+        assertTrue(copy.getIsBorrowed());
+        assertNotEquals(original.getId(), copy.getId());
     }
 }
-

@@ -62,7 +62,7 @@ public class Book extends Media{
     }
 
 
-    public int getBookId() {return super.getId();}
+   // public int getBookId() {return super.getId();}
     public String getTitle() {return  super.getTitle();}
     public String getAuthor() {return super.getAuthor();}
     public String getISBN() {return ISBN;}
