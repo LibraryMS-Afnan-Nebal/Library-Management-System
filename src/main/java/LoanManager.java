@@ -55,9 +55,22 @@ public class LoanManager {
         listOfLoans.add(loan);
         user.incrementTotalBorrowedCount();
         UserManager.getInstance().evaluateAndPromoteUser(user);
-        user.addBorrowedMedia(media);
+        String membership;
+        FineStrategy strategy = user.getFineCalculator().getFineStrategy();
 
+        if (strategy instanceof GoldFineStrategy) {
+            membership = "GOLD member — 20% fine discount";
+        }
+        else if (strategy instanceof SilverFineStrategy) {
+            membership = "SILVER member — 10% fine discount";
+        }
+        else {
+            membership = "REGULAR member — No discount";
+        }
+
+        user.addBorrowedMedia(media);
         System.out.println("Borrowed successfully. Return by: " + loan.getDueDate());
+        System.out.println("Your membership tier: " + membership);
         return true;
     }
 
