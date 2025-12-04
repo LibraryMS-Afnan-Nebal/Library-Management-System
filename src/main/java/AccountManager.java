@@ -33,10 +33,16 @@ public abstract class AccountManager<T extends Role> {
      */
     public boolean login(String username, String password)
     {
+        if (username.isEmpty() || password.isEmpty())
+            throw new IllegalArgumentException("All fields are required");
+
         Integer id = usernameToId.get(username.toLowerCase());
+
         if (id == null) return false;
+
         T account = accounts.get(id);
         if (!checkPassword(account, password)) return false;
+
         setLoggedIn(account, true);
         return true;
     }
@@ -95,15 +101,18 @@ public abstract class AccountManager<T extends Role> {
      * @return true if the account is successfully created, false if the username already exists
      */
     public boolean signUp(String username, String password, String email) {
+        if (username.isEmpty() || password.isEmpty() || email.isEmpty())
+            throw new IllegalArgumentException("All fields are required");
+
         String uname = username.toLowerCase();
-        if (usernameToId.containsKey(uname)) return false;
+        if (usernameToId.containsKey(uname))
+            throw new IllegalArgumentException("Username should be unique");
 
         int accountId = getNextId();
         T account = buildAccount(accountId, username, password, email);
 
         accounts.put(accountId, account);
         usernameToId.put(uname, accountId);
-
         return true;
     }
     /**

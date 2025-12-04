@@ -1,31 +1,67 @@
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
-public class ReminderService extends Observable  {
+public class ReminderService extends Observable {
     private final LoanManager loanManager;
-    public ReminderService(LoanManager loanManager)
-    {
+
+    public ReminderService(LoanManager loanManager) {
         this.loanManager = loanManager;
     }
 
-    public void sendReminders()
-    {
-        List <Loan> overdueLoans = loanManager.getOverdueLoans();
+    public void sendReminders() {
+        List<Loan> overdueLoans = loanManager.getOverdueLoans();
+        if (overdueLoans.isEmpty()) {
+            System.out.println("No reminders to send. There are no overdue loans at the moment.");
+            return;
+        }
 
         Map<User, List<Loan>> loansByUser = new HashMap<>();
-        for (Loan loan : overdueLoans)
-        {
+        for (Loan loan : overdueLoans) {
             loansByUser.computeIfAbsent(loan.getUser(), k -> new ArrayList<>()).add(loan);
         }
 
-        for (Map.Entry<User, List<Loan>> entry : loansByUser.entrySet())
-        {
+        for (Map.Entry<User, List<Loan>> entry : loansByUser.entrySet()) {
             User user = entry.getKey();
-            double fines = user.getFineCalculator().estimateOngoingFine(entry.getValue(),10);
-            int overdueCount = entry.getValue().size();
-            String message = "You have " + overdueCount + " overdue book(s) , Estimated Fine: " + fines+" NIS.";
+            List<Loan> userLoans = entry.getValue();
+
+            StringBuilder messageBuilder = new StringBuilder();
+            messageBuilder.append("📚 Overdue Items Reminder\n\n");
+            messageBuilder.append("You currently have ")
+                    .append(userLoans.size())
+                    .append(" overdue item(s):\n\n");
+
+            double totalFine = 0;
+            LocalDate today = LocalDate.now();
+
+            int index = 1;
+            for (Loan loan : userLoans) {
+                Media media = loan.getMedia();
+                long overdueDays = ChronoUnit.DAYS.between(loan.getDueDate(), today);
+
+                if (overdueDays > 0) {
+                    double fine = overdueDays * media.getDailyFineRate();
+                    totalFine += fine;
+
+                    messageBuilder.append(index++)
+                            .append(") ")
+                            .append(media.getTitle())
+                            .append(" (")
+                            .append(media.getClass().getSimpleName())
+                            .append(")\n")
+                            .append("   • Overdue: ").append(overdueDays).append(" days\n")
+                            .append("   • Fine: ").append(String.format("%.2f", fine)).append(" NIS\n\n");
+                }
+            }
+
+            messageBuilder.append("-------------------------------------\n");
+            messageBuilder.append(String.format("Estimated Total Fine: %.2f NIS", totalFine));
+
             setChanged();
-            notifyObservers(new UserMessage(user, message));
+            notifyObservers(new UserMessage(user, messageBuilder.toString()));
         }
+
+
     }
 }
 

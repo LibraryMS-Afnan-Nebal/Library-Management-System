@@ -1,203 +1,226 @@
 import java.util.*;
+public class BookManager extends MediaManager<Book> {
+    private static BookManager instance = null;
 
-public class BookManager implements MediaManager {
-    static List<Book> listOfBooks = new ArrayList<>();
-    public static List<Book> getListOfBooks() {return listOfBooks;}
+    private BookManager() {}
 
-    //this should be updated
+    public static BookManager getInstance()
+    {
+        if (instance == null) {instance = new BookManager();}
+        return instance;
+    }
+
+    @Override
+    protected Book createCopy(Book original) {return new Book(original); }
+
+    @Override
+    protected boolean supports(Media media) {return media instanceof Book;}
+
     /**
-     * Adds a book to the library with a unique ISBN
-     *
-     * @param media the book to add to the library
-     * @since 0.0.1
+     * Enforce ISBN uniqueness at repository level.
+     * Book constructor already validates ISBN format, so here we only check repository state.
      */
     @Override
-    public void add(Media media, int copies)
+    protected boolean isDuplicate(Book item)
     {
-        //new
-        if (!(media instanceof Book))
-            throw new IllegalArgumentException("Only Book objects allowed");
-        Book book = (Book) media;
+        if (item == null) return false;
+        String isbn = item.getISBN();
+        if (isbn == null) return false;
+        return super.listOfItems.stream().anyMatch(b -> isbn.equals(b.getISBN()));
+    }
 
-        for(Book b: listOfBooks)
-        {
-            if(b.getISBN().equals(book.getISBN()))
-            {
-               throw new IllegalArgumentException("The ISBN should be uniqe");
+    public void displaySearchByTitle(String title, Object person) {
+        List<Book> found = searchByTitle(title);
+
+        displaySearchResults(found, person);
+    }
+
+    public void displaySearchByAuthor(String author, Object person) {
+        List<Book> found = searchByAuthor(author);
+
+        displaySearchResults(found, person);
+    }
+
+    public void displaySearchByISBN(String isbn, Object person) {
+        List<Book> found = listOfItems.stream()
+                .filter(b -> b.getISBN().equals(isbn))
+                .toList();
+
+        displaySearchResults(found, person);
+    }
+
+    private void displaySearchResults(List<Book> found, Object person) {
+        if (found.isEmpty()) {
+            System.out.println("This book not found");
+            return;
+        }
+
+        if (!hasAvailableCopies(found)) {
+            System.out.println("All copies was Borrowed");
+            return;
+        }
+
+        Map<String, List<Book>> grouped = groupByTitleAuthor(found);
+
+        if (person instanceof User) {
+            System.out.printf("%-15s %-25s %-20s %-10s\n", "ISBN", "Title", "Author", "Status");
+            for (List<Book> group : grouped.values()) {
+                Book b = group.stream().filter(x -> !x.getIsBorrowed()).findFirst().get();
+                System.out.printf("%-15s %-25s %-20s %-10s\n",
+                        b.getISBN(), b.getTitle(), b.getAuthor(), "Available");
+            }
+        } else if (person instanceof Admin) {
+            System.out.printf("%-15s %-25s %-20s %-10s %-10s %-10s\n",
+                    "ISBN", "Title", "Author", "Total", "Borrowed", "Available");
+
+            for (List<Book> group : grouped.values()) {
+                Book b = group.get(0);
+                long total = group.size();
+                long borrowed = group.stream().filter(Book::getIsBorrowed).count();
+                long available = total - borrowed;
+                System.out.printf("%-15s %-25s %-20s %-10d %-10d %-10d\n",
+                        b.getISBN(), b.getTitle(), b.getAuthor(), total, borrowed, available);
             }
         }
-        Book.validateCopies(copies);
-        if (copies>1)
-        {
-            for (int i=1; i<= copies;i++)
-            {
-                Book copyBook = new Book(book);
-                listOfBooks.add(copyBook);
-            }
-        }
-        else listOfBooks.add(book);
     }
 
+//    /**
+//     * Searches the list of books based on the specified field (title, author, or ISBN)
+//     * and the given search keyword
+//     * <p>
+//     * The method iterates over all books and collects those that match
+//     * the search criteria into a list, which is then returned
+//     *
+//     * @param type the search field ("title", "author", or "isbn")
+//     * @param key the keyword to search for
+//     * @return a list of books that match the search criteria
+//     * @since 0.0.1
+//     */
+//     List<Book> findBooksByField(String type, String key)
+//    {
+//        boolean match;
+//        List<Book> listOfSearchedBooks = new ArrayList<>();
+//        for (Book book: listOfItems)
+//        {
+//            if (type.equals("title"))
+//            {
+//                match = book.getTitle().equals(key);
+//            }
+//            else if (type.equals("author"))
+//            {
+//                match = book.getAuthor().equals(key);
+//            }
+//            else
+//            {
+//                match = book.getISBN().equals(key);
+//            }
+//            if (match)
+//            {
+//                listOfSearchedBooks.add(book);
+//            }
+//        }
+//        return listOfSearchedBooks;
+//    }
+//
+//     List<Book> filterAvailableBooksForUser(List<Book> books)
+//    {
+//        List<Book> available = new ArrayList<>();
+//        Set<String> addedISBNs = new HashSet<>();
+//
+//        for (Book b : books)
+//        {
+//            if (!b.getIsBorrowed()&& addedISBNs.add(b.getISBN())) {
+//                available.add(b);
+//            }
+//        }
+//        return available;
+//    }
+//
+//     List<BookStats> summarizeBooksForAdmin(List<Book> books)
+//    {
+//        List<BookStats> stats = new ArrayList<>();
+//        Set<String> addedISBNs = new HashSet<>();
+//
+//        for (Book book : books)
+//        {
+//            if (addedISBNs.add(book.getISBN()))
+//            {
+//                int total = 0, borrowed = 0;
+//
+//                for (Book b : books)
+//                {
+//                    if (b.getISBN().equals(book.getISBN()))
+//                    {
+//                        total++;
+//                        if (b.getIsBorrowed()){borrowed++;}
+//                    }
+//                }
+//
+//                int available = total - borrowed;
+//                stats.add(new BookStats(book.getISBN(), book.getTitle(), book.getAuthor(), total, borrowed, available));
+//            }
+//        }
+//        return stats;
+//    }
+//
+//
+//    private String formatUserView(List<Book> books)
+//    {
+//        StringBuilder sb = new StringBuilder();
+//        sb.append(String.format("%-15s %-25s %-20s %-10s\n", "ISBN", "Title", "Author", "Status"));
+//        for (Book b : books)
+//        {
+//            sb.append(String.format("%-15s %-25s %-20s %-10s\n", b.getISBN(), b.getTitle(), b.getAuthor(), "Borrowed"));
+//        }
+//        return sb.toString();
+//    }
+//
+//    private String formatAdminStats(List<BookStats> stats)
+//    {
+//        StringBuilder sb = new StringBuilder();
+//        sb.append(String.format("%-15s %-25s %-19s %12s %12s %12s\n", "ISBN", "Title", "Author", "Total", "Borrowed", "Available"));
+//        for (BookStats s : stats)
+//        {
+//            sb.append(s).append("\n");
+//        }
+//        return sb.toString();
+//    }
+//
+//     String searchBooksByField(String type, String key, Object person)
+//    {
+//        List<Book> foundBooks = findBooksByField(type, key);
+//
+//        if (foundBooks.isEmpty())
+//        {
+//            return "Book not found\n";
+//        }
+//        if (person instanceof User)
+//        {
+//            List<Book> available = filterAvailableBooksForUser(foundBooks);
+//            return formatUserView(available);
+//        }
+//        else if (person instanceof Admin)
+//        {
+//            List<BookStats> stats = summarizeBooksForAdmin(foundBooks);
+//            return formatAdminStats(stats);
+//        }
+//        else
+//        {
+//            return "Invalid user type\n";
+//        }
+//    }
+//
+//    @Override
+//    public void searchItemByTitle(String title, Object person)
+//    {
+//        System.out.print(searchBooksByField("title", title, person));
+//    }
+//
+//    public void searchBookByAuthor(String author, Object person)
+//    {
+//        System.out.print( searchBooksByField("author", author, person));
+//    }
 
-    ////new
-    @Override
-    public Book findAvailableByTitle(String title) {
-        for (Book b : listOfBooks) {
-            if (b.getTitle().equalsIgnoreCase(title) && !b.getIsBorrowed()) {
-                return b;
-            }
-        }
-        return null;
-    }
-    @Override
-    public List<Book> findAllByTitle(String title) {
-        List<Book> result = new ArrayList<>();
-        for (Book b : listOfBooks) {
-            if (b.getTitle().equalsIgnoreCase(title)) {
-                result.add(b);
-            }
-        }
-        return result;
-    }
-    /**
-     * Searches the list of books based on the specified field (title, author, or ISBN)
-     * and the given search keyword
-     * <p>
-     * The method iterates over all books and collects those that match
-     * the search criteria into a list, which is then returned
-     *
-     * @param type the search field ("title", "author", or "isbn")
-     * @param key the keyword to search for
-     * @return a list of books that match the search criteria
-     * @since 0.0.1
-     */
-     List<Book> findBooksByField(String type, String key)
-    {
-        boolean match;
-        List<Book> listOfSearchedBooks = new ArrayList<>();
-        for (Book book: listOfBooks)
-        {
-            if (type.equals("title"))
-            {
-                match = book.getTitle().equals(key);
-            }
-            else if (type.equals("author"))
-            {
-                match = book.getAuthor().equals(key);
-            }
-            else
-            {
-                match = book.getISBN().equals(key);
-            }
-            if (match)
-            {
-                listOfSearchedBooks.add(book);
-            }
-        }
-        return listOfSearchedBooks;
-    }
 
-     List<Book> filterAvailableBooksForUser(List<Book> books)
-    {
-        List<Book> available = new ArrayList<>();
-        Set<String> addedISBNs = new HashSet<>();
-
-        for (Book b : books)
-        {
-            if (!b.getIsBorrowed()&& addedISBNs.add(b.getISBN())) {
-                available.add(b);
-            }
-        }
-        return available;
-    }
-
-     List<BookStats> summarizeBooksForAdmin(List<Book> books)
-    {
-        List<BookStats> stats = new ArrayList<>();
-        Set<String> addedISBNs = new HashSet<>();
-
-        for (Book book : books)
-        {
-            if (addedISBNs.add(book.getISBN()))
-            {
-                int total = 0, borrowed = 0;
-
-                for (Book b : books)
-                {
-                    if (b.getISBN().equals(book.getISBN()))
-                    {
-                        total++;
-                        if (b.getIsBorrowed()){borrowed++;}
-                    }
-                }
-
-                int available = total - borrowed;
-                stats.add(new BookStats(book.getISBN(), book.getTitle(), book.getAuthor(), total, borrowed, available));
-            }
-        }
-        return stats;
-    }
-
-
-    private String formatUserView(List<Book> books)
-    {
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%-15s %-25s %-20s %-10s\n", "ISBN", "Title", "Author", "Status"));
-        for (Book b : books)
-        {
-            sb.append(String.format("%-15s %-25s %-20s %-10s\n", b.getISBN(), b.getTitle(), b.getAuthor(), "Borrowed"));
-        }
-        return sb.toString();
-    }
-
-    private String formatAdminStats(List<BookStats> stats)
-    {
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%-15s %-25s %-19s %12s %12s %12s\n", "ISBN", "Title", "Author", "Total", "Borrowed", "Available"));
-        for (BookStats s : stats)
-        {
-            sb.append(s).append("\n");
-        }
-        return sb.toString();
-    }
-
-     String searchBooksByField(String type, String key, Object person)
-    {
-        List<Book> foundBooks = findBooksByField(type, key);
-
-        if (foundBooks.isEmpty())
-        {
-            return "Book not found\n";
-        }
-        if (person instanceof User)
-        {
-            List<Book> available = filterAvailableBooksForUser(foundBooks);
-            return formatUserView(available);
-        }
-        else if (person instanceof Admin)
-        {
-            List<BookStats> stats = summarizeBooksForAdmin(foundBooks);
-            return formatAdminStats(stats);
-        }
-        else
-        {
-            return "Invalid user type\n";
-        }
-    }
-
-    public void searchBookByTitle(String title, Object person)
-    {
-        System.out.print(searchBooksByField("title", title, person));
-    }
-
-    public void searchBookByAuthor(String author, Object person)
-    {
-        System.out.print( searchBooksByField("author", author, person));
-    }
-
-    public void searchBookByIsbn(String isbn, Object person)
-    {
-        System.out.print(searchBooksByField("isbn", isbn, person));
-    }
 
 }

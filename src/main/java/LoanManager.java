@@ -6,9 +6,11 @@ import java.util.List;
 public class LoanManager {
     private static LoanManager instance = null;
     private List<Loan> listOfLoans;
+
     private LoanManager() {
         listOfLoans = new ArrayList<>();
     }
+
     public static LoanManager getInstance() {
         if (instance == null) {
             instance = new LoanManager();
@@ -16,8 +18,9 @@ public class LoanManager {
         return instance;
     }
 
-    public List<Loan>getLoanList(){return this.listOfLoans;}
-
+    public List<Loan> getLoanList() {
+        return this.listOfLoans;
+    }
 
 
     public boolean borrow(Media media, User user) {
@@ -50,7 +53,6 @@ public class LoanManager {
         media.setIsBorrowed(true);
         Loan loan = new Loan(media, user);
         listOfLoans.add(loan);
-        //added the missing part
         user.incrementTotalBorrowedCount();
         UserManager.getInstance().evaluateAndPromoteUser(user);
         user.addBorrowedMedia(media);
@@ -85,20 +87,13 @@ public class LoanManager {
         return false;
     }
 
-    public List<Loan> getOverdueLoans()
-    {
-        if (listOfLoans.isEmpty())
-        {
-            System.out.println("There are no loans");
-            return null;
-        }
-
+    public List<Loan> getOverdueLoans() {
         List<Loan> overdueLoans = new ArrayList<>();
         LocalDate today = LocalDate.now();
-        for(Loan loan : listOfLoans )
-        {
-            if (today.isAfter(loan.getDueDate()))
+        for (Loan loan : listOfLoans) {
+            if (today.isAfter(loan.getDueDate())) {
                 overdueLoans.add(loan);
+            }
         }
         return overdueLoans;
     }
@@ -107,7 +102,7 @@ public class LoanManager {
      * Accrues fines for all overdue loans up to today.
      * baseRatePerDay for books = 10, for CDs = 20, etc.
      */
-    public void accrueFines(double baseRatePerDay , Loan loan) {
+    public void accrueFines(double baseRatePerDay, Loan loan) {
         LocalDate today = LocalDate.now();
 
         LocalDate lastAccrued = loan.getLastAccruedDate();
@@ -124,8 +119,8 @@ public class LoanManager {
         // move lastAccruedDate forward to today to avoid double counting
         loan.setLastAccruedDate(today);
 
-        System.out.println("Accrued " + finalFine + " NIS for user " + user.getUsername()
-                + " on loan " + loan.getLoanId() + " (" + daysToAccrue + " day(s)).");
+      //  System.out.println("Accrued " + finalFine + " NIS for user " + user.getUsername()
+        //        + " on loan " + loan.getLoanId() + " (" + daysToAccrue + " day(s)).");
     }
 
     /**
@@ -147,38 +142,81 @@ public class LoanManager {
         user.addFineAmount(finalFine);
         loan.setLastAccruedDate(uptoDate);
 
-        System.out.println("Accrued for return: " + finalFine + " NIS for user " + user.getUsername());
+        //System.out.println("Accrued for return: " + finalFine + " NIS for user " + user.getUsername());
     }
 
     public String generateOverdueReport(User user) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("===== Overdue Items =====\n");
+        List<Loan> userOverdueLoans = new ArrayList<>();
+        LocalDate today = LocalDate.now();
 
-        double totalFine = 0;
-
+        // جمع القروض المتأخرة
         for (Loan loan : listOfLoans) {
-            if (loan.getUser().equals(user) && !loan.getReturned()) {
-                if (loan.getDueDate().isBefore(LocalDate.now())) {
-
-                    Media m = loan.getMedia();
-
-                    long overdueDays = ChronoUnit.DAYS.between(loan.getDueDate(), LocalDate.now());
-                    double fine = overdueDays * m.getDailyFineRate();
-
-                    sb.append(String.format(
-                            "%s | overdue %d days | fine: %.2f NIS\n",
-                            m.getTitle(), overdueDays, fine
-                    ));
-
-                    totalFine += fine;
-                }
+            if (loan.getUser().equals(user) && !loan.getReturned() && loan.getDueDate().isBefore(today)) {
+                userOverdueLoans.add(loan);
+                // تأكد من تحديث الفاين لمرة واحدة فقط
+                accrueFinesForLoan(loan, loan.getMedia().getDailyFineRate(), today);
             }
         }
 
-        sb.append("-------------------------\n");
-        sb.append(String.format("Total outstanding fines: %.2f NIS\n", totalFine));
+        if (userOverdueLoans.isEmpty()) {
+            return "No overdue items.";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("============ Overdue Items ============\n");
+
+        double totalFine = 0;
+
+        for (Loan loan : userOverdueLoans) {
+            Media m = loan.getMedia();
+            long overdueDays = ChronoUnit.DAYS.between(loan.getDueDate(), today);
+            // استخدم الفاين المحتسب مسبقًا من User
+            double fine = overdueDays * m.getDailyFineRate();
+            sb.append(String.format("%s | overdue %d days | fine: %.2f NIS\n", m.getTitle(), overdueDays, fine));
+            totalFine += fine;
+        }
+
+        sb.append("=======================================\n");
+        sb.append(String.format("Total accrued fines: %.2f NIS\n", totalFine));
+        sb.append(String.format("Amount already paid: %.2f NIS\n", totalFine - user.getFineBalance()));
+        sb.append(String.format("Remaining balance: %.2f NIS\n", user.getFineBalance()));
 
         return sb.toString();
     }
-
 }
+
+
+//    public String generateOverdueReport(User user) {
+//
+//        StringBuilder sb = new StringBuilder();
+//        sb.append("============ Overdue Items ============\n");
+//
+//        double totalFine = 0;
+//
+//        for (Loan loan : listOfLoans) {
+//            if (loan.getUser().equals(user) && !loan.getReturned()) {
+//                if (loan.getDueDate().isBefore(LocalDate.now())) {
+//
+//                    Media m = loan.getMedia();
+//
+//                    long overdueDays = ChronoUnit.DAYS.between(loan.getDueDate(), LocalDate.now());
+//                    double fine = overdueDays * m.getDailyFineRate();
+//
+//                    sb.append(String.format(
+//                            "%s | overdue %d days | fine: %.2f NIS\n",
+//                            m.getTitle(), overdueDays, fine
+//                    ));
+//
+//                    totalFine += fine;
+//                }
+//            }
+//        }
+//
+//        sb.append("=======================================\n");
+//        sb.append(String.format("Total accrued fines: %.2f NIS\n", totalFine));
+//        sb.append(String.format("Amount already paid: %.2f NIS\n", totalFine - user.getFineBalance()));
+//        sb.append(String.format("Remaining balance: %.2f NIS\n", user.getFineBalance()));
+//
+//        return sb.toString();
+//    }
+//}

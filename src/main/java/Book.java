@@ -2,10 +2,10 @@ import java.time.LocalDate;
 
 public class Book extends Media{
 
-    private static int nextId = 1;
-    private final int bookId;
+    //private static int nextId = 1;
+    //private final int bookId;
    // private final String title;
-    private final String author;
+//    private final String author;
     private final String ISBN;
    // private boolean isBorrowed;
 
@@ -21,11 +21,15 @@ public class Book extends Media{
      */
     public Book (String title,String author,String isbnPart)
     {
-        super(title);
-        this.bookId = nextId++;
-        this.author = validateAuthor(author);
+        super(title,author);
         String isbn = "978"+isbnPart;
         this.ISBN = validateIsbn(isbn);
+    }
+
+    public Book(Book copy) {
+        super(copy.getTitle(), copy.getAuthor());
+        this.ISBN = copy.ISBN;
+        this.setIsBorrowed(copy.getIsBorrowed());
     }
 
     @Override
@@ -38,30 +42,6 @@ public class Book extends Media{
         return 10;
     }
 
-    public Book(Book copy) {
-        super(copy.getTitle());
-        this.bookId = nextId++;
-        this.author = copy.author;
-        this.ISBN = copy.ISBN;
-        this.setIsBorrowed(copy.getIsBorrowed());
-    }
-
-    static String validateTitle(String title)
-    {
-        if (title.isEmpty())
-        {
-            throw new IllegalArgumentException("Title can't be empty");
-        }
-        return title;
-    }
-
-    static String validateAuthor(String author)
-    {
-        if (author.isEmpty()) {
-            throw new IllegalArgumentException("Author can't be empty");
-        }
-        return author;
-    }
 
     public String validateIsbn(String isbn)
     {
@@ -81,17 +61,10 @@ public class Book extends Media{
         return isbn;
     }
 
-    public static int validateCopies(int copies)
-    {
-        if (copies <= 0)
-            throw new IllegalArgumentException("Copies must be positive");
 
-        return copies;
-    }
-
-    public int getBookId() {return bookId;}
+    public int getBookId() {return super.getId();}
     public String getTitle() {return  super.getTitle();}
-    public String getAuthor() {return author;}
+    public String getAuthor() {return super.getAuthor();}
     public String getISBN() {return ISBN;}
     public boolean getIsBorrowed() {return super.getIsBorrowed();}
     public void setIsBorrowed(boolean status) {super.setIsBorrowed(status);}

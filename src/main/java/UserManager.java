@@ -65,10 +65,12 @@ public class UserManager extends AccountManager<User> {
     public boolean canUnregister(User user) {
         if (user == null) return false;
         if (user.getFineBalance() > 0) {
+            System.out.println("Cannot unregister user: The user has outstanding fines.");
             return false;
         }
         for (Loan loan : LoanManager.getInstance().getLoanList()) {
             if (loan.getUser().equals(user) && !loan.getReturned()) {
+                System.out.println("Cannot unregister user: The user has borrowed items that are not returned.");
                 return false;
             }
         }
@@ -86,7 +88,10 @@ public class UserManager extends AccountManager<User> {
      */
     public boolean unregisterUser(int userId) {
         User user = accounts.get(userId);
-        if (user == null) return false;
+        if (user == null) {
+            System.out.println("Cannot unregister: No user found with the provided ID.");
+            return false;
+        }
         if (!canUnregister(user)) {
             return false;
         }
@@ -126,6 +131,18 @@ public class UserManager extends AccountManager<User> {
            calculator.setFineStrategy(new RegularFineStrategy());
        }
    }
+
+    public void printAllUsers() {
+        System.out.println("--------------------------------");
+
+        System.out.printf("%-10s | %-20s%n", "ID", "Username");
+        System.out.println("--------------------------------");
+
+        for (User u : accounts.values()) {
+            System.out.printf("%-10s | %-20s%n", u.getId(), u.getUsername());
+        }
+    }
+
 }
 
 

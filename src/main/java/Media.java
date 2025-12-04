@@ -16,7 +16,10 @@
  */
 
 public abstract class Media {
+    private int id;
+    private static int nextId = 1;
     private String title;
+    private String author;
     private boolean isBorrowed;
     /**
      * Constructs a media item with the specified title.
@@ -24,16 +27,29 @@ public abstract class Media {
      * @param title the title of the media item (cannot be null or empty)
      * @throws IllegalArgumentException if title is null or empty
      */
-    public Media(String title) {
-        if (title == null || title.isEmpty())
-            throw new IllegalArgumentException("Title cannot be empty");
+    public Media(String title , String author)
+    {
+        this.id = nextId++;
+        if (title == null || title.isEmpty()) throw new IllegalArgumentException("Title cannot be empty");
         this.title = title;
+
+        if (author == null ||author.isEmpty()) throw new IllegalArgumentException("Author can't be empty");
+        this.author = author;
+
         this.isBorrowed = false;
     }
+
+
+    /** Returns the id of the media item */
+    public int getId(){return id;}
 
     /** Returns the title of the media item */
     public String getTitle() {
         return title;
+    }
+
+    public String getAuthor() {
+        return author;
     }
 
     /** Returns true if the media item is currently borrowed */
