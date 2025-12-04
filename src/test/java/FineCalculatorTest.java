@@ -1,79 +1,105 @@
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import static org.junit.jupiter.api.Assertions.*;
 class FineCalculatorTest {
-    static class DummyUser extends User {
-        public DummyUser() { super(122, "dummy","email","pass"); }
+
+    private FineCalculator calculator;
+
+    @BeforeEach
+    void setUp() {
+        calculator = new FineCalculator(new RegularFineStrategy());
     }
-    static class DummyBook extends Book {
-        public DummyBook() { super("dummy title", "dummy author",""); }
+    @Test
+    void testGetAndSetFineStrategy() {
+        FineCalculator calc = new FineCalculator(new RegularFineStrategy());
+
+        // initial strategy
+        assertTrue(calc.getFineStrategy() instanceof RegularFineStrategy);
+
+        // change strategy
+        calc.setFineStrategy(new SilverFineStrategy());
+        assertTrue(calc.getFineStrategy() instanceof SilverFineStrategy);
+
+        // change again
+        calc.setFineStrategy(new GoldFineStrategy());
+        assertTrue(calc.getFineStrategy() instanceof GoldFineStrategy);
     }
 
-    private Loan createLoan(LocalDate due, LocalDate returned, boolean isReturned) {
-        Loan loan = new Loan(new DummyBook(), new DummyUser());
-        loan.setDueDate(due);
-        loan.setReturnDate(returned);
-        loan.setReturned(isReturned);
-        return loan;
-    }
 
     @Test
-    void testNoFineWhenNotReturnedYet() {
-        Loan loan = createLoan(LocalDate.now(), null, false);
-        FineCalculator calculator = new FineCalculator(new RegularFineStrategy());
+    void testApplyStrategy_NullStrategyDefaultsToRegular() {
+        calculator.setFineStrategy(null);
+        double result = calculator.applyStrategy(50);
+        assertEquals(50, result);
+        assertNotNull(calculator.getFineStrategy());
+    }
+    @Test
+    void testApplyStrategy_Regular() {
+        assertEquals(100, calculator.applyStrategy(100));
+    }
+    @Test
+    void testApplyStrategy_Silver() {
+        calculator.setFineStrategy(new SilverFineStrategy());
+        assertEquals(90, calculator.applyStrategy(100));
+    }
+    @Test
+    void testApplyStrategy_Gold() {
+        calculator.setFineStrategy(new GoldFineStrategy());
+        assertEquals(80, calculator.applyStrategy(100));
+    }
+    /*
+    @Test
+    void testEstimateOngoingFine_EmptyList() {
+        List<Loan> emptyList = new ArrayList<>();
+
+        assertEquals(0.0, calculator.estimateOngoingFine(emptyList, 10));
+    }
+    @Test
+    void testEstimateOngoingFine_LoanNotOverdue() {
+        User user = new User(1, "A", "x", "a@test.com");
+        Media media = new Book("B", "Auth", "1234567892");
+        Loan loan = new Loan(media, user);
+
+
+        loan.setDueDate(LocalDate.now().plusDays(1));
+        List<Loan> loans = List.of(loan);
+
+        assertEquals(0, calculator.estimateOngoingFine(loans, 10));
+    }
+    @Test
+    void testEstimateOngoingFine_MultipleLoansWithSilverStrategy() {
+        calculator.setFineStrategy(new SilverFineStrategy());
+        User user = new User(3, "A", "x", "a@test.com");
+        Media media = new Book("B", "Auth", "1234567890");
+
+        Loan l1 = new Loan(media, user);
+        Loan l2 = new Loan(media, user);
+
+        l1.setDueDate(LocalDate.now().minusDays(1)); //
+        l2.setDueDate(LocalDate.now().minusDays(3)); //
+
+        List<Loan> loans = List.of(l1, l2);
+
+        // Base fines: 1*10 + 3*10 = 40
+        // Silver = 10% discount → 40 * 0.9 = 36
+        assertEquals(36, calculator.estimateOngoingFine(loans, 10));
+    }*/
+  /*  @Test
+    void testCalculateFine_LoanNotReturned() {
+        User user = new User(4, "A", "x", "a@test.com");
+        Media media = new Book("B", "Auth", "1234567895");
+        Loan loan = new Loan(media, user);
+
+        loan.setReturned(false);
+        loan.setReturnDate(null);
+
         assertEquals(0, calculator.calculateFine(loan, 10));
     }
+*/
 
-    @Test
-    void testNoFineIfReturnedOnTime() {
-        LocalDate today = LocalDate.now();
-        Loan loan = createLoan(today, today, true);
-        FineCalculator calculator = new FineCalculator(new RegularFineStrategy());
-        assertEquals(0, calculator.calculateFine(loan, 10));
-    }
-
-    @Test
-    void testRegularFineStrategy() {
-        LocalDate due = LocalDate.now();
-        LocalDate returned = due.plusDays(3); // 3 days late
-        Loan loan = createLoan(due, returned, true);
-
-        FineCalculator calculator = new FineCalculator(new RegularFineStrategy());
-        assertEquals(3 * 10, calculator.calculateFine(loan, 10)); // no discount
-    }
-
-    @Test
-    void testSilverFineStrategy() {
-        LocalDate due = LocalDate.now();
-        LocalDate returned = due.plusDays(2); // 2 days late
-        Loan loan = createLoan(due, returned, true);
-
-        FineCalculator calculator = new FineCalculator(new SilverFineStrategy());
-        assertEquals(2 * 10 * 0.9, calculator.calculateFine(loan, 10)); // 10% off
-    }
-
-    @Test
-    void testGoldFineStrategy() {
-        LocalDate due = LocalDate.now();
-        LocalDate returned = due.plusDays(5); // 5 days late
-        Loan loan = createLoan(due, returned, true);
-
-        FineCalculator calculator = new FineCalculator(new GoldFineStrategy());
-        assertEquals(5 * 10 * 0.8, calculator.calculateFine(loan, 10)); // 20% off
-    }
-
-    @Test
-    void testDefaultStrategyWhenNull() {
-        LocalDate due = LocalDate.now();
-        LocalDate returned = due.plusDays(1);
-        Loan loan = createLoan(due, returned, true);
-
-        FineCalculator calculator = new FineCalculator(null);
-        assertEquals(10, calculator.calculateFine(loan, 10)); // defaults to regular
-    }
 }

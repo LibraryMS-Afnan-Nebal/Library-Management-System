@@ -7,9 +7,8 @@ import java.util.ArrayList;
  * Admins can perform privileged operations such as unregistering users.
  * </p>
  *
- * <p>Note: Admin operations require the admin to be logged in.</p>
  *
- * @author Nebal
+ * @author Neb * <p>Note: Admin operations require the admin to be logged in.</p>al
  * @version 1.0
  */
 public class Admin extends Role{

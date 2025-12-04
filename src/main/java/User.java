@@ -102,7 +102,7 @@ public class User extends Role{
     public boolean addFineAmount(double amount) {
         if (amount <= 0) return false;
         this.fineBalance += amount;
-        if (this.fineBalance > 0) this.canBorrow = false;
+        this.canBorrow = false;
         return true;
     }
     /** Increments the total count of items the user has borrowed */

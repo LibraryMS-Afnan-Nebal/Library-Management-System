@@ -1,68 +1,45 @@
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class AdminTest {
-   private Admin admin;
-    private AdminManager manager;
-
+    private Admin admin;
+    private UserManager userManager;;
     @BeforeEach
     void setUp() {
-        manager = AdminManager.getInstance();
-        manager.getAdmins().clear();
-        manager.usernameToId().clear();
-
-        admin = new Admin(manager.getNextAdminId(), "username", "password");
-        manager.getAdmins().put(admin.getAdminId(), admin);
-        manager.usernameToId().put("username", admin.getAdminId());
-    }
-
-    @AfterEach
-    void tearDown() {
-    }
-
-    @Test
-    void testLogin() {
-        assertTrue( admin.login("username", "password"));
-        assertTrue(admin.isLoggedIn());
+        admin = new Admin(1, "Admin1", "pass", "admin1@test.com");
+        userManager = UserManager.getInstance();
+        userManager.accounts.clear();
+        userManager.usernameToId.clear();
     }
     @Test
-    void testLogout() {
-        admin.login("username", "password");
-        assertTrue(admin.logout());
+    void testConstructorInitializesFieldsCorrectly() {
+        assertEquals(1, admin.getId());
+        assertEquals("Admin1", admin.getUsername());
+        assertEquals("pass", admin.getPassword());
+        assertEquals("admin1@test.com", admin.getEmail());
         assertFalse(admin.isLoggedIn());
     }
     @Test
-    void testChangePassword() {
-        admin.login("username", "password");
-        admin.changePassword("newPass");
-        assertEquals("newPass", admin.getPassword());
+    void testUnregisterUserFailsWhenNotLoggedIn() {
+        admin.setLoggedIn(false);
+        assertFalse(admin.unregisterUser(10),
+                "Should return false if admin is not logged in");
     }
     @Test
-    void testChangeUsername() {
-        admin.login("username", "password");
-        admin.changeUsername("newUsername");
-        assertEquals("newUsername", admin.getUsername());
+    void testUnregisterPassesWhenUserManagerReturnsTrue() {
+        admin.setLoggedIn(true);
+        userManager.signUp("User1", "pwd", "u1@test.com");
+        boolean result = admin.unregisterUser(1);
+        assertTrue(result, "Admin should unregister existing users");
     }
 
     @Test
-    void testIsLoggedInInitiallyFalse() {
-        assertFalse(admin.isLoggedIn());
-    }
-    @Test
-    void testDefaultConstructor() {
-        Admin defaultAdmin = new Admin();
-
-        assertEquals(0, defaultAdmin.getAdminId(), "Default adminId should be 0");
-        assertNull(defaultAdmin.getUsername(), "Default username should be null");
-        assertNull(defaultAdmin.getPassword(), "Default password should be null");
-        assertFalse(defaultAdmin.isLoggedIn(), "Default loggedIn should be false");
-
-
-        assertFalse(defaultAdmin.login("any", "any"), "Login should fail ");
-        assertFalse(defaultAdmin.logout(), "Logout should fail ");
+    void testUnregisterFailsWhenUserManagerReturnsFalse() {
+        admin.setLoggedIn(true);
+        boolean result = admin.unregisterUser(999);
+        assertFalse(result, "Unregister should fail when the user does not exist");
     }
 
 }
