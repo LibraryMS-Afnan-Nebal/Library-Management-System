@@ -56,7 +56,6 @@ class UserManagerTest {
         User user = new User(2, "Sara", "123", "s@test.com");
         userManager.accounts.put(2, user);
 
-        // Create an unreturned loan
         Book book = new Book("Book A", "Author", "1234567890");
         Loan loan = new Loan(book, user);
 
@@ -84,6 +83,22 @@ class UserManagerTest {
         userManager.accounts.put(4, user);
 
         assertTrue(userManager.canUnregister(user));
+    }
+    @Test
+    void testCanUnregister_LoanBelongsToAnotherUser() {
+
+        userManager.signUp("u1", "p1", "e1@mail.com");
+        userManager.signUp("u2", "p2", "e2@mail.com");
+
+        User targetUser = userManager.accounts.get(1);
+        User otherUser  = userManager.accounts.get(2);
+
+        Book b = new Book("T", "A", "1234567890");
+        Loan loan = new Loan(b, otherUser);
+        loanManager.getLoanList().add(loan);
+
+        boolean result = userManager.canUnregister(targetUser);
+        assertTrue(result, "User should still be unregisterable because the loan belongs to someone else");
     }
 
     //unregistr user
