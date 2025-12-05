@@ -32,8 +32,6 @@ public class UserManager extends AccountManager<User> {
         return instance;
     }
 
-
-
     /**
      * Creates a new User account with the specified details.
      *
@@ -47,7 +45,6 @@ public class UserManager extends AccountManager<User> {
     protected User buildAccount(int id, String username, String password, String email) {
         return new User(id, username, password, email);
     }
-   // make sure to update this
 
     /**
      * Checks if a user can be unregistered.
@@ -77,7 +74,6 @@ public class UserManager extends AccountManager<User> {
 
         return true;
     }
-
 
     /**
      * Removes a user from the system if they meet the conditions

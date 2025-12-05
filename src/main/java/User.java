@@ -87,9 +87,6 @@ public class User extends Role{
         this.fineBalance = fineBalance;
     }
 
-
-
-
     /**
      * Adds a fine amount to the user's balance.
      * <p>

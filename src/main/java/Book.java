@@ -1,14 +1,6 @@
-import java.time.LocalDate;
 
 public class Book extends Media{
-
-    //private static int nextId = 1;
-    //private final int bookId;
-   // private final String title;
-//    private final String author;
     private final String ISBN;
-   // private boolean isBorrowed;
-
     /**
      * Creates a new Book with the given title, author, and ISBN part.
      * The full ISBN will be prefixed with "978".
@@ -61,8 +53,6 @@ public class Book extends Media{
         return isbn;
     }
 
-
-   // public int getBookId() {return super.getId();}
     public String getTitle() {return  super.getTitle();}
     public String getAuthor() {return super.getAuthor();}
     public String getISBN() {return ISBN;}
