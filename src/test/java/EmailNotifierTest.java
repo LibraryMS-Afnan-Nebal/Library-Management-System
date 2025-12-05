@@ -3,8 +3,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Observable;
-
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.times;
@@ -26,7 +24,7 @@ class EmailNotifierTest {
     @Test
     void updateSendsEmailTest()
     {
-        User user = new User(1, "user1", "user1@gmail.com", "pass1");
+        User user = new User(1, "user1","pass1","user1@gmail.com");
         String message = "You have 1 overdue book";
         UserMessage userMessage = new UserMessage(user, message);
 

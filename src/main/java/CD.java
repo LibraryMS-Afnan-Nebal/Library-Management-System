@@ -11,8 +11,6 @@
  * @see Media
  */
 public class CD extends Media {
-   // private static int nextId = 1;
-   // private final int cdId;
     /**
      * Constructs a new CD with the specified title.
      * The CD is assigned a unique ID automatically.
@@ -21,7 +19,6 @@ public class CD extends Media {
      */
     public CD(String title , String author) {
         super(title,author);
-        //this.cdId = nextId++;
     }
     /**
      * Copy constructor to create a new CD from an existing CD.
@@ -34,7 +31,6 @@ public class CD extends Media {
      */
     public CD(CD copy) {
         super(copy.getTitle(),copy.getAuthor());
-       // this.cdId = nextId++;
         this.setIsBorrowed(copy.getIsBorrowed());
     }
     /**

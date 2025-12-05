@@ -53,11 +53,11 @@ public class LoanManager {
         media.setIsBorrowed(true);
         Loan loan = new Loan(media, user);
         listOfLoans.add(loan);
+
+        FineStrategy strategy = user.getFineCalculator().getFineStrategy();
         user.incrementTotalBorrowedCount();
         UserManager.getInstance().evaluateAndPromoteUser(user);
         String membership;
-        FineStrategy strategy = user.getFineCalculator().getFineStrategy();
-
         if (strategy instanceof GoldFineStrategy) {
             membership = "GOLD member — 20% fine discount";
         }
@@ -131,9 +131,6 @@ public class LoanManager {
 
         // move lastAccruedDate forward to today to avoid double counting
         loan.setLastAccruedDate(today);
-
-      //  System.out.println("Accrued " + finalFine + " NIS for user " + user.getUsername()
-        //        + " on loan " + loan.getLoanId() + " (" + daysToAccrue + " day(s)).");
     }
 
     /**
@@ -154,19 +151,15 @@ public class LoanManager {
 
         user.addFineAmount(finalFine);
         loan.setLastAccruedDate(uptoDate);
-
-        //System.out.println("Accrued for return: " + finalFine + " NIS for user " + user.getUsername());
     }
 
     public String generateOverdueReport(User user) {
         List<Loan> userOverdueLoans = new ArrayList<>();
         LocalDate today = LocalDate.now();
 
-        // جمع القروض المتأخرة
         for (Loan loan : listOfLoans) {
             if (loan.getUser().equals(user) && !loan.getReturned() && loan.getDueDate().isBefore(today)) {
                 userOverdueLoans.add(loan);
-                // تأكد من تحديث الفاين لمرة واحدة فقط
                 accrueFinesForLoan(loan, loan.getMedia().getDailyFineRate(), today);
             }
         }

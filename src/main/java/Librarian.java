@@ -1,5 +1,4 @@
-import java.time.LocalDate;
-import java.util.ArrayList;
+
 import java.util.List;
 /**
  * Represents a librarian in the library system.
@@ -8,8 +7,16 @@ import java.util.List;
  * </p>
  */
 public class Librarian  extends Role {
+    private final LoanManager loanManager;
+
     public Librarian(int id, String username, String password, String email) {
         super(id, username, password, email);
+        this.loanManager = LoanManager.getInstance();
+    }
+
+    public Librarian(int id, String username, String password, String email, LoanManager loanManager) {
+        super(id, username, password, email);
+        this.loanManager = loanManager; // inject mock
     }
 
     /**
@@ -23,9 +30,7 @@ public class Librarian  extends Role {
      */
     public List<Loan> detectOverdueMedia()
     {
-        LoanManager loanManager = LoanManager.getInstance();
-
-        List<Loan> listOfOverdueLoans = new ArrayList<>(loanManager.getOverdueLoans());
+        List<Loan> listOfOverdueLoans = loanManager.getOverdueLoans();
 
         for (Loan loan : listOfOverdueLoans) {
             Media media = loan.getMedia();

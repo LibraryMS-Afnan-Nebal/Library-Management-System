@@ -51,7 +51,7 @@ public class FineCalculator {
         return fineStrategy.calculateFine(baseFine);
     }
 /*
-    /**
+
      * Estimates the ongoing fine for a list of loans without mutating the loans or users.
      * <p>
      * Useful for sending reminders or displaying current overdue fines.
@@ -75,8 +75,8 @@ public class FineCalculator {
            fines+= applyStrategy(baseFine);
        }
        return fines;
-    }*/
-    /*
+    }
+
     /**
      * Calculates the fine for a specific loan based on its return date and base rate.
      *

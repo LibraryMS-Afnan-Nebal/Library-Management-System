@@ -56,8 +56,10 @@ class MediaManagerTest {
     private TestMediaManager mediaManager;
 
     @BeforeEach
-    void setUp() {
+    void setUp()
+    {
         mediaManager = new TestMediaManager();
+        mediaManager.listOfItems.clear();
     }
 
     @Test
@@ -91,12 +93,12 @@ class MediaManagerTest {
 
     @Test
     void add_DupliactedItemForBookOnly() {
-        Book book1 = new Book("book1","author1","1234567890");
-        Book book2 = new Book("book2","author2","1234567890");
+        Book book1 = new Book("book1","author1","1234567895");
+        Book book2 = new Book("book2","author2","1234567895");
         BookManager bookManager = BookManager.getInstance();
         bookManager.add(book1,1);
         Exception exception = assertThrows((IllegalArgumentException.class), () -> bookManager.add(book2,1));
-        assertEquals("ISBN should be Uniqe", exception.getMessage());
+        assertEquals("ISBN should be Unique", exception.getMessage());
     }
 
     @Test

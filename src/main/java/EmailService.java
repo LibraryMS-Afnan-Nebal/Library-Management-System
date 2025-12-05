@@ -7,6 +7,7 @@ public class EmailService {
     private final String username;
     private final String password;
 
+
     public EmailService(String username, String password)
     {
         this.username = username; //YourEmail

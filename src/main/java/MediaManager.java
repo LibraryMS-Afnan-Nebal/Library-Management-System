@@ -29,7 +29,7 @@ public abstract class MediaManager<T extends Media>  {
 
         T item = (T) media;
 
-        if (isDuplicate(item)) throw new IllegalArgumentException("ISBN should be Uniqe");
+        if (isDuplicate(item)) throw new IllegalArgumentException("ISBN should be Unique");
 
         for (int i = 0; i < copies; i++) {
             listOfItems.add(copies == 1 ? item : createCopy(item));
