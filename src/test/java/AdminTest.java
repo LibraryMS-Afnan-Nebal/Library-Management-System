@@ -28,15 +28,7 @@ class AdminTest {
         assertFalse(admin.unregisterUser(10),
                 "Should return false if admin is not logged in");
     }
-    /// //////////////////////////////////////////////////////
-//    @Test
-//    void testUnregisterPassesWhenUserManagerReturnsTrue() {
-//        admin.setLoggedIn(true);
-//        userManager.signUp("User1", "pwd", "u1@test.com");
-//        boolean result = admin.unregisterUser(1);
-//        assertTrue(result, "Admin should unregister existing users");
-//    }
-
+    
     @Test
     void testUnregisterFailsWhenUserManagerReturnsFalse() {
         admin.setLoggedIn(true);
