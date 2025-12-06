@@ -49,7 +49,6 @@ public class EmailService {
 
 
         } catch (MessagingException e) {
-            e.printStackTrace();
             throw new RuntimeException("Faild to send email",e);
         }
     }
