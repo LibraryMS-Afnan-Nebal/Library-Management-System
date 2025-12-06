@@ -19,7 +19,9 @@ class EmailNotifierTest {
     }
 
     @AfterEach
-    void tearDown() {}
+    void tearDown() {
+        // No cleanup needed for this test class.
+    }
 
     @Test
     void updateSendsEmailTest()
