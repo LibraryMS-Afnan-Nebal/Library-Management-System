@@ -60,14 +60,22 @@ public class BookManager extends MediaManager<Book> {
 
         Map<String, List<Book>> grouped = groupByTitleAuthor(found);
 
-        if (person instanceof User) {
+        if (person instanceof User)
+        {
             sb.append(String.format("%-15s %-25s %-20s %-10s%n", "ISBN", "Title", "Author", "Status"));
             for (List<Book> group : grouped.values()) {
-                Book b = group.stream().filter(x -> !x.getIsBorrowed()).findFirst().get();
+                Book b = group.stream()
+                        .filter(x -> !x.getIsBorrowed())
+                        .findFirst()
+                        .orElse(null);
+
+                if (b == null)
+                    continue;
                 sb.append(String.format("%-15s %-25s %-20s %-10s%n",
                         b.getISBN(), b.getTitle(), b.getAuthor(), "Available"));
             }
-        } else if (person instanceof Admin) {
+        }
+        else if (person instanceof Admin) {
             sb.append(String.format("%-15s %-25s %-20s %-10s %-10s %-10s%n",
                     "ISBN", "Title", "Author", "Total", "Borrowed", "Available"));
 

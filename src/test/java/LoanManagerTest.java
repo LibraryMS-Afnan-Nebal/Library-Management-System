@@ -318,7 +318,6 @@ void testBorrow_WhenUserSilverMember() {
 
     @Test
     void testGenerateOverdueReport_OverdueLoan_AlreadyReturned() {
-        // قرض متأخر ولكن تم إرجاعه → يجب تجاهله
         Loan returnedLoan = new Loan(book2, user);
         returnedLoan.setDueDate(LocalDate.now().minusDays(3));
         returnedLoan.setReturned(true);

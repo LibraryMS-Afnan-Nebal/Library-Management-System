@@ -193,6 +193,13 @@ class UserManagerTest {
         assertTrue(output.contains("2") && output.contains("Bob"), "Should list user2.");
     }
 
+    @Test
+    void printAllUserTest_NoUsersFound()
+    {
+        assertFalse(userManager.printAllUsers());
+
+    }
+
 
 
 

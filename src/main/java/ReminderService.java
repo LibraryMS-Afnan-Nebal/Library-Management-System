@@ -9,12 +9,12 @@ public class ReminderService extends Observable {
         this.loanManager = loanManager;
     }
 
-    public void sendReminders() {
+    public boolean sendReminders() {
         List<Loan> overdueLoans = loanManager.getOverdueLoans();
         if (overdueLoans.isEmpty())
         {
             System.out.println("No reminders to send. There are no overdue loans at the moment.");
-            return;
+            return false;
         }
 
         Map<User, List<Loan>> loansByUser = new HashMap<>();
@@ -31,7 +31,7 @@ public class ReminderService extends Observable {
 
             StringBuilder messageBuilder = new StringBuilder();
             messageBuilder.append("📚 Overdue Items Reminder\n\n");
-            messageBuilder.append("You currently have ")
+            messageBuilder.append("You have ")
                     .append(userLoans.size())
                     .append(" overdue item(s):\n\n");
 
@@ -62,6 +62,7 @@ public class ReminderService extends Observable {
             setChanged();
             notifyObservers(new UserMessage(user, messageBuilder.toString()));
         }
+        return true;
     }
 
 

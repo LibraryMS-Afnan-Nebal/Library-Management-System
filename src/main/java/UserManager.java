@@ -128,15 +128,20 @@ public class UserManager extends AccountManager<User> {
        }
    }
 
-    public void printAllUsers() {
-        System.out.println("--------------------------------");
-
+    public boolean printAllUsers()
+    {
+        if (accounts.values().isEmpty())
+        {
+            System.out.println("No users found");
+            return false;
+        }
+        System.out.println("Current users:");
         System.out.printf("%-10s | %-20s%n", "ID", "Username");
-        System.out.println("--------------------------------");
-
-        for (User u : accounts.values()) {
+        for (User u : accounts.values())
+        {
             System.out.printf("%-10s | %-20s%n", u.getId(), u.getUsername());
         }
+        return true;
     }
 
 }

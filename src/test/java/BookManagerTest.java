@@ -136,4 +136,20 @@ class BookManagerTest {
         assertEquals("Person must be either a User or an Admin", exception.getMessage());
     }
 
+    @Test
+    void testGetSearchResultsString_skipsGroupWithNoAvailableCopies_forUser() {
+        for (Book b : bookManager.searchByTitle("Book One")) {
+            b.setIsBorrowed(true);
+        }
+
+        String output = bookManager.displaySearchByAuthor("Author A", user);
+        assertTrue(output.contains("Book Two"));
+        assertTrue(output.contains("Available"));
+        assertFalse(output.contains("Book One"));
+        assertFalse(output.contains("All copies was Borrowed"));
+    }
+
+
+
+
 }

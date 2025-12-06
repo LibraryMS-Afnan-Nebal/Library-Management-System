@@ -28,7 +28,7 @@ class AdminTest {
         assertFalse(admin.unregisterUser(10),
                 "Should return false if admin is not logged in");
     }
-    
+
     @Test
     void testUnregisterFailsWhenUserManagerReturnsFalse() {
         admin.setLoggedIn(true);

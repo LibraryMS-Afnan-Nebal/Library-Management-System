@@ -5,7 +5,7 @@ import java.util.List;
 
 public class LoanManager {
     private static LoanManager instance = null;
-    private List<Loan> listOfLoans;
+    private final List<Loan> listOfLoans;
 
     private LoanManager() {
         listOfLoans = new ArrayList<>();
