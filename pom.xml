@@ -23,14 +23,6 @@
         <scope>test</scope>
     </dependency>
 
-        <!-- JUnit 5 (JUnit Jupiter) -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>5.11.0</version>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
              <groupId>com.sun.mail</groupId>
             <artifactId>jakarta.mail</artifactId>
