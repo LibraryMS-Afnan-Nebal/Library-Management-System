@@ -2,10 +2,12 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class LoanManager {
     private static LoanManager instance = null;
     private final List<Loan> listOfLoans;
+    private static final Logger logger = Logger.getLogger(LoanManager.class.getName());
 
     private LoanManager() {
         listOfLoans = new ArrayList<>();
@@ -29,7 +31,7 @@ public class LoanManager {
 
         // Rule 1: User must have no fines
         if (user.getFineBalance() > 0) {
-            System.out.println("You must pay your fines before borrowing.");
+            logger.warning("You must pay your fines before borrowing.");
             return false;
         }
 
@@ -38,14 +40,14 @@ public class LoanManager {
             if (loan.getUser().equals(user) && !loan.getReturned() &&
                     loan.getDueDate().isBefore(LocalDate.now())) {
 
-                System.out.println("Borrowing blocked: You have overdue items.");
+                logger.warning("Borrowing blocked: You have overdue items.");
                 return false;
             }
         }
 
         // Rule 3: Media must be available
         if (media.getIsBorrowed()) {
-            System.out.println("This item is currently borrowed.");
+            logger.warning("This item is currently borrowed.");
             return false;
         }
 
@@ -69,8 +71,8 @@ public class LoanManager {
         }
 
         user.addBorrowedMedia(media);
-        System.out.println("Borrowed successfully. Return by: " + loan.getDueDate());
-        System.out.println("Your membership tier: " + membership);
+        logger.info("Borrowed successfully. Return by: " + loan.getDueDate());
+        logger.info("Your membership tier: " + membership);
         return true;
     }
 
@@ -91,12 +93,12 @@ public class LoanManager {
 
                 user.removeBorrowedMedia(media);
 
-                System.out.println("Returned successfully.");
+                logger.info("Returned successfully.");
                 return true;
             }
         }
 
-        System.out.println("You did not borrow this item.");
+        logger.warning("You did not borrow this item.");
         return false;
     }
 
@@ -169,7 +171,7 @@ public class LoanManager {
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append("============ Overdue Items ============\n");
+        sb.append("============ Overdue Items ============%n");
 
         double totalFine = 0;
 
@@ -178,14 +180,14 @@ public class LoanManager {
             long overdueDays = ChronoUnit.DAYS.between(loan.getDueDate(), today);
 
             double fine = overdueDays * m.getDailyFineRate();
-            sb.append(String.format("%s | overdue %d days | fine: %.2f NIS\n", m.getTitle(), overdueDays, fine));
+            sb.append(String.format("%s | overdue %d days | fine: %.2f NIS%n", m.getTitle(), overdueDays, fine));
             totalFine += fine;
         }
 
-        sb.append("=======================================\n");
-        sb.append(String.format("Total accrued fines: %.2f NIS\n", totalFine));
-        sb.append(String.format("Amount already paid: %.2f NIS\n", totalFine - user.getFineBalance()));
-        sb.append(String.format("Remaining balance: %.2f NIS\n", user.getFineBalance()));
+        sb.append("=======================================%n");
+        sb.append(String.format("Total accrued fines: %.2f NIS%n", totalFine));
+        sb.append(String.format("Amount already paid: %.2f NIS%n", totalFine - user.getFineBalance()));
+        sb.append(String.format("Remaining balance: %.2f NIS%n", user.getFineBalance()));
 
         return sb.toString();
     }
