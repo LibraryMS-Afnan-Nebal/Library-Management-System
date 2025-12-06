@@ -52,10 +52,13 @@ public class Book extends Media{
 
         return isbn;
     }
-
+   @Override
     public String getTitle() {return  super.getTitle();}
+    @Override
     public String getAuthor() {return super.getAuthor();}
     public String getISBN() {return ISBN;}
+    @Override
     public boolean getIsBorrowed() {return super.getIsBorrowed();}
+    @Override
     public void setIsBorrowed(boolean status) {super.setIsBorrowed(status);}
 }
