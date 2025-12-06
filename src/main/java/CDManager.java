@@ -43,13 +43,17 @@ public class CDManager extends MediaManager<CD> {
         Map<String, List<CD>> grouped = groupByTitleAuthor(found);
 
         if (person instanceof User) {
-            sb.append(String.format("%-25s %-20s %-10s\n", "Title", "Author", "Status"));
+            sb.append(String.format("%-25s %-20s %-10s%n", "Title", "Author", "Status"));
             for (List<CD> group : grouped.values()) {
-                CD c = group.stream().filter(x -> !x.getIsBorrowed()).findFirst().get();
-                sb.append(String.format("%-25s %-20s %-10s\n",
-                        c.getTitle(), c.getAuthor(), "Available"));
+                group.stream()
+                        .filter(x -> !x.getIsBorrowed())
+                        .findFirst()
+                        .ifPresent(c -> sb.append(String.format("%-25s %-20s %-10s%n",
+                                c.getTitle(), c.getAuthor(), "Available")));
             }
-        } else if (person instanceof Admin) {
+        }
+
+         else if (person instanceof Admin) {
             sb.append(String.format("%-25s %-20s %-10s %-10s %-10s\n",
                     "Title", "Author", "Total", "Borrowed", "Available"));
             for (List<CD> group : grouped.values()) {
