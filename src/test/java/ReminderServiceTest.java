@@ -30,7 +30,11 @@ class ReminderServiceTest {
     }
 
     @AfterEach
-    void tearDown() {}
+    void tearDown() {
+        reminderService = null;
+        mockLoanManager = null;
+        //no
+    }
 
     @Test
     public void sendRemindersTest()
@@ -61,3 +65,4 @@ class ReminderServiceTest {
 
     }
 }
+
