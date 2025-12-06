@@ -80,7 +80,7 @@ public class BookManager extends MediaManager<Book> {
                     "ISBN", "Title", "Author", "Total", "Borrowed", "Available"));
 
             for (List<Book> group : grouped.values()) {
-                Book b = group.getFirst();
+                Book b = group.get(0);
                 long total = group.size();
                 long borrowed = group.stream().filter(Book::getIsBorrowed).count();
                 long available = total - borrowed;
