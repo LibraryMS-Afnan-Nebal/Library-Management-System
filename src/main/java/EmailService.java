@@ -49,7 +49,7 @@ public class EmailService {
 
 
         } catch (MessagingException e) {
-            throw new RuntimeException("Faild to send email",e);
+            throw new EmailSendException("Failed to send email to: " + to, e);
         }
     }
 }
