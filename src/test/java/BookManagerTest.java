@@ -148,7 +148,7 @@ class BookManagerTest {
         assertFalse(output.contains("Book One"));
         assertFalse(output.contains("All copies was Borrowed"));
     }
-    
+
 
 
 
