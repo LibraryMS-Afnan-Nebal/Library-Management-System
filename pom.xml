@@ -19,7 +19,7 @@
         <!-- SonarCloud configuration -->
         <sonar.organization>afnan-and-neball</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <sonar.projectKey>afnan-and-neball_Library-Management-System</sonar.projectKey>
+        <sonar.projectKey>Afnan-And-Neball_Library-Management-System</sonar.projectKey>
 
         <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
