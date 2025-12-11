@@ -18,7 +18,6 @@ public class Loan {
         this.media = media;
         this.user = user;
         this.borrowDate = LocalDate.now();
-//        this.dueDate = LocalDate.now().plusDays(media.getLoanDurationDays());
         this.dueDate = LocalDate.of(2025, 11, 30);
         this.returnDate = null;
         this.returned = false;

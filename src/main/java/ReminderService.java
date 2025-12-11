@@ -1,8 +1,10 @@
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.logging.Logger;
 
 public class ReminderService extends Observable {
+    private static final Logger logger = Logger.getLogger(ReminderService.class.getName());
     private final LoanManager loanManager;
 
     public ReminderService(LoanManager loanManager) {
@@ -13,7 +15,7 @@ public class ReminderService extends Observable {
         List<Loan> overdueLoans = loanManager.getOverdueLoans();
         if (overdueLoans.isEmpty())
         {
-            System.out.println("No reminders to send. There are no overdue loans at the moment.");
+            logger.info("No reminders to send. There are no overdue loans at the moment.");
             return false;
         }
 

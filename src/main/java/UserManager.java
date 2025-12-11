@@ -1,3 +1,4 @@
+import java.util.logging.Logger;
 /**
  * Singleton class that manages all user accounts in the Library Management System.
  * <p>
@@ -17,6 +18,7 @@
  * @see FineCalculator
  */
 public class UserManager extends AccountManager<User> {
+    private static final Logger logger = Logger.getLogger(UserManager.class.getName());
     private static UserManager instance = null;
 
     /** Private constructor to enforce singleton pattern */
@@ -54,20 +56,20 @@ public class UserManager extends AccountManager<User> {
      *     <li>No unpaid fines</li>
      *     <li>No active (not returned) loans</li>
      * </ul>
-     * </p>
      *
      * @param user the user to check
      * @return true if the user can be unregistered, false otherwise
      */
+
     public boolean canUnregister(User user) {
         if (user == null) return false;
         if (user.getFineBalance() > 0) {
-            System.out.println("Cannot unregister user: The user has outstanding fines.");
+            logger.warning("Cannot unregister user: The user has outstanding fines.");
             return false;
         }
         for (Loan loan : LoanManager.getInstance().getLoanList()) {
             if (loan.getUser().equals(user) && !loan.getReturned()) {
-                System.out.println("Cannot unregister user: The user has borrowed items that are not returned.");
+                logger.warning("Cannot unregister user: The user has borrowed items that are not returned.");
                 return false;
             }
         }
@@ -85,7 +87,7 @@ public class UserManager extends AccountManager<User> {
     public boolean unregisterUser(int userId) {
         User user = accounts.get(userId);
         if (user == null) {
-            System.out.println("Cannot unregister: No user found with the provided ID.");
+            logger.warning("Cannot unregister: No user found with the provided ID.");
             return false;
         }
         if (!canUnregister(user)) {
@@ -101,7 +103,7 @@ public class UserManager extends AccountManager<User> {
      * Evaluates the user's borrowing history and promotes them to a membership
      * tier accordingly:
      * <ul>
-     *     <li>Regular: < 5 borrowed items</li>
+     *     <li>Regular: &lt; 5 borrowed items</li>
      *     <li>Silver: ≥ 5 borrowed items</li>
      *     <li>Gold: ≥ 15 borrowed items</li>
      * </ul>
@@ -119,10 +121,10 @@ public class UserManager extends AccountManager<User> {
 
        if (count >= 15) {
            calculator.setFineStrategy(new GoldFineStrategy());
-           System.out.println(user.getUsername() + " is now a GOLD member! ");
+           logger.info(user.getUsername() + " is now a GOLD member! ");
        } else if (count >= 5) {
            calculator.setFineStrategy(new SilverFineStrategy());
-           System.out.println(user.getUsername() + " is now a SILVER member!");
+           logger.info(user.getUsername() + " is now a SILVER member!");
        } else {
            calculator.setFineStrategy(new RegularFineStrategy());
        }
@@ -132,10 +134,10 @@ public class UserManager extends AccountManager<User> {
     {
         if (accounts.values().isEmpty())
         {
-            System.out.println("No users found");
+            logger.warning("No users found");
             return false;
         }
-        System.out.println("Current users:");
+        logger.info("Current users:");
         System.out.printf("%-10s | %-20s%n", "ID", "Username");
         for (User u : accounts.values())
         {

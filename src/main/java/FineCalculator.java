@@ -47,48 +47,4 @@ public class FineCalculator {
         if (fineStrategy == null) fineStrategy = new RegularFineStrategy();
         return fineStrategy.calculateFine(baseFine);
     }
-/*
-
-     * Estimates the ongoing fine for a list of loans without mutating the loans or users.
-     * <p>
-     * Useful for sending reminders or displaying current overdue fines.
-     * </p>
-     *
-     * @param loans the list of loans to calculate fines for
-     * @param baseRatePerDay the base fine rate per day for each overdue item
-     * @return the total estimated fine for all loans
-
-    ///this should be used for the email/remainder
-    public double estimateOngoingFine(List<Loan> loans, double baseRatePerDay) {
-       if (loans.isEmpty())return 0.0;
-       double fines = 0.0;
-       for(Loan loan:loans)
-       {
-           LocalDate dueDate = loan.getDueDate();
-           LocalDate today = LocalDate.now();
-           long overdueDays = ChronoUnit.DAYS.between(dueDate, today);
-           if (overdueDays <= 0) return 0;
-           double baseFine = overdueDays * baseRatePerDay;
-           fines+= applyStrategy(baseFine);
-       }
-       return fines;
-    }
-
-    /**
-     * Calculates the fine for a specific loan based on its return date and base rate.
-     *
-     * @param loan the loan to calculate the fine for
-     * @param baseRatePerDay the base fine rate per day
-     * @return the total fine for the loan; 0 if not returned or not overdue
-
-
-    public double calculateFine(Loan loan, double baseRatePerDay) {
-        LocalDate dueDate = loan.getDueDate();
-        LocalDate returnDate = loan.getReturnDate();
-        if (returnDate == null || !loan.getReturned()) return 0;
-        long overdueDays = ChronoUnit.DAYS.between(dueDate, returnDate);
-        if (overdueDays <= 0) return 0;
-        double baseFine = overdueDays * baseRatePerDay;
-        return applyStrategy(baseFine);
-    }*/
 }

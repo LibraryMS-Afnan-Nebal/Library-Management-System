@@ -1,7 +1,7 @@
 import java.util.Observable;
 import java.util.Observer;
 public class EmailNotifier implements Observer {
-    private EmailService emailService;
+    private final EmailService emailService;
 
     public EmailNotifier(EmailService emailService)
     {
